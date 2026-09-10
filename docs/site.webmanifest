@@ -1,0 +1,43 @@
+{
+ "name": "Celica T-Sport — ZZT231",
+ "short_name": "Celica",
+ "description": "Service reference, mod record and issue tracker for a 2003 Toyota Celica T-Sport.",
+ "start_url": ".",
+ "scope": ".",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#0E0D0F",
+ "theme_color": "#0E0D0F",
+ "icons": [
+  {
+   "src": "assets/icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "assets/icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "assets/icons/icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "Issues",
+   "url": "issues.html"
+  },
+  {
+   "name": "Fusebox",
+   "url": "electrical.html"
+  },
+  {
+   "name": "Manual",
+   "url": "manual.html"
+  }
+ ]
+}

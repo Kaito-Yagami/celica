@@ -196,9 +196,11 @@
         if (!dragging) return;
         var dx = e.clientX - lastX, dy = e.clientY - lastY;
         lastX = e.clientX; lastY = e.clientY;
-        targetAz += dx * 0.008;
-        vAz = dx * 0.008;
-        targetEl = Math.max(-0.15, Math.min(1.5, targetEl + dy * 0.005));
+        /* Drag moves the car, not the camera: pull right and the car turns to
+           the right, which means the camera goes the other way. */
+        targetAz -= dx * 0.008;
+        vAz = -dx * 0.008;
+        targetEl = Math.max(-0.15, Math.min(1.5, targetEl - dy * 0.005));
       });
       function endDrag() {
         if (!dragging) return;

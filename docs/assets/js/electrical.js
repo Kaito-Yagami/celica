@@ -39,21 +39,68 @@
   var COL_A = [9, 10, 11, 12, 13, 14, 15, 16];
   var COL_B = [1, 2, 3, 4, 5, 6, 7, 8];
 
-  var gridX = 18, gridY = 150;
-  var blockX = 9 * (W + GX) + 46;
-  var VBW = blockX + 2 * (W + GX) + 14;
-  var VBH = 8 * (H * 0.78 + GY) + 40;
+  /*
+   * Two arrangements of the same box.
+   *
+   * Wide is the lid exactly: 17 alone up top, 18-35 in two rows of nine, and
+   * the 1-16 block standing to the right in two columns.
+   *
+   * On a phone that block is 130 units past the edge of a 319 px window, so it
+   * is invisible unless you happen to swipe, and the tall block leaves the
+   * middle of the map empty. Narrow lays 1-16 out underneath instead, as two
+   * rows of eight. Each group keeps its own order, the slots stay finger-sized,
+   * and the width needed drops from 632 to 486 - the hint says it has moved.
+   */
+  var narrowQ = window.matchMedia('(max-width: 760px)');
+  var L = {};
+
+  function layout() {
+    var narrow = narrowQ.matches;
+    var gridX = 18;
+    var rowsW = 9 * (W + GX);
+    var bh = H * 0.78;
+
+    if (narrow) {
+      var gridY = H + 22;
+      var blockY = gridY + 2 * H + GY + 26;
+      L = {
+        narrow: true, gridX: gridX, gridY: gridY, blockY: blockY, bh: bh,
+        vbw: gridX * 2 + rowsW,
+        vbh: blockY + 2 * (bh + GY) + 18,
+        dividerY: blockY - 14
+      };
+    } else {
+      var blockX = rowsW + 46;
+      L = {
+        narrow: false, gridX: gridX, gridY: 150, blockX: blockX, bh: bh,
+        vbw: blockX + 2 * (W + GX) + 14,
+        vbh: 8 * (bh + GY) + 40,
+        dividerX: blockX - 22
+      };
+    }
+  }
 
   function slotXY(n) {
     var i = TOPROW.indexOf(n);
-    if (i >= 0) return { x: gridX + i * (W + GX), y: gridY, w: W, h: H };
+    if (i >= 0) return { x: L.gridX + i * (W + GX), y: L.gridY, w: W, h: H };
     i = BOTROW.indexOf(n);
-    if (i >= 0) return { x: gridX + i * (W + GX), y: gridY + H + GY, w: W, h: H };
-    if (n === 17) return { x: gridX + 4 * (W + GX) - 22, y: gridY - H - 20, w: W + 44, h: H };
-    i = COL_A.indexOf(n);
-    if (i >= 0) return { x: blockX, y: 22 + i * (H * 0.78 + GY), w: W, h: H * 0.78 };
-    i = COL_B.indexOf(n);
-    if (i >= 0) return { x: blockX + W + GX, y: 22 + i * (H * 0.78 + GY), w: W, h: H * 0.78 };
+    if (i >= 0) return { x: L.gridX + i * (W + GX), y: L.gridY + H + GY, w: W, h: H };
+    if (n === 17) {
+      return { x: L.gridX + 4 * (W + GX) - 22, y: L.gridY - H - 20, w: W + 44, h: H };
+    }
+
+    i = COL_B.indexOf(n);                       // 1-8
+    if (i >= 0) {
+      return L.narrow
+        ? { x: L.gridX + i * (W + GX), y: L.blockY, w: W, h: L.bh }
+        : { x: L.blockX + W + GX, y: 22 + i * (L.bh + GY), w: W, h: L.bh };
+    }
+    i = COL_A.indexOf(n);                       // 9-16
+    if (i >= 0) {
+      return L.narrow
+        ? { x: L.gridX + i * (W + GX), y: L.blockY + L.bh + GY, w: W, h: L.bh }
+        : { x: L.blockX, y: 22 + i * (L.bh + GY), w: W, h: L.bh };
+    }
     return null;
   }
 
@@ -66,8 +113,10 @@
   var selected = null, filter = 'all';
 
   function drawBox() {
+    layout();
     var host = $('#fbSvg');
     host.innerHTML = '';
+    var VBW = L.vbw, VBH = L.vbh;
     var svg = svgEl('svg', {
       viewBox: '0 0 ' + VBW + ' ' + VBH,
       /* explicit dimensions give the element an intrinsic ratio, without which
@@ -82,10 +131,16 @@
       x: 4, y: 6, width: VBW - 8, height: VBH - 12, rx: 6,
       fill: 'none', stroke: 'var(--ink-3)', 'stroke-width': 1.5
     }));
-    svg.appendChild(svgEl('line', {
-      x1: blockX - 22, y1: 14, x2: blockX - 22, y2: VBH - 18,
-      stroke: 'var(--ink-3)', 'stroke-width': 1, 'stroke-dasharray': '3 4'
-    }));
+    /* the rule separating the 1-16 block from the rest, whichever side it is on */
+    svg.appendChild(L.narrow
+      ? svgEl('line', {
+          x1: 14, y1: L.dividerY, x2: VBW - 14, y2: L.dividerY,
+          stroke: 'var(--ink-3)', 'stroke-width': 1, 'stroke-dasharray': '3 4'
+        })
+      : svgEl('line', {
+          x1: L.dividerX, y1: 14, x2: L.dividerX, y2: VBH - 18,
+          stroke: 'var(--ink-3)', 'stroke-width': 1, 'stroke-dasharray': '3 4'
+        }));
 
     F.slots.forEach(function (s) {
       var p = slotXY(s.n);
@@ -449,6 +504,17 @@
   }
 
   /* --------------------------------------------------------------- boot */
+
+  /* the map rearranges between the wide and narrow layouts, so rebuild it when
+     the viewport crosses that line - rotating a phone, mostly */
+  if (narrowQ.addEventListener) {
+    narrowQ.addEventListener('change', function () {
+      drawBox();
+      if (selected != null) select(selected);
+    });
+  } else if (narrowQ.addListener) {
+    narrowQ.addListener(function () { drawBox(); });
+  }
 
   renderFilters();
   drawBox();

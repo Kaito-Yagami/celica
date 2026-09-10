@@ -824,13 +824,13 @@ ul.watch li::before{
    ========================================================================== */
 
 #fbSvg{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;position:relative}
-#fbSvg .fbsvg{min-width:600px}
+#fbSvg .fbsvg{min-width:486px}   /* the narrow layout's own width */
 
 @media (max-width:700px){
   .fb-box{padding:14px 0 14px 14px}
   .fb-box .fb-hint,.fb-box .fb-legend{padding-right:14px}
   .fb-box .fb-hint::after{
-    content:" · swipe the map sideways";color:var(--red);
+    content:" · 1-16 moved below to fit · swipe if it overflows";color:var(--red);
   }
   /* fade the right edge so it reads as scrollable */
   #fbSvg::after{
@@ -1018,4 +1018,19 @@ a.projcard.done h3{text-decoration:line-through;text-decoration-color:var(--ink-
      but a content swap still shunts the whole page up and down under you */
   .dash-side{height:300px;max-height:none}
   .pin-label{font-size:10px;padding:3px 6px}
+}
+
+/* ==========================================================================
+   mobile fixes
+   ========================================================================== */
+@media (max-width:760px){
+  /* The load budget has five columns. Squeezed into 335 px the number inputs
+     collapse to 42 px, which shows about one digit. Give the table a width
+     that fits its content and let the wrapper scroll it instead. */
+  #loadTbl{min-width:620px}
+  #loadTbl input[type=number]{min-width:72px}
+
+  /* a long provenance chip should wrap rather than push out of the figure */
+  .fig figcaption{gap:6px}
+  .fig figcaption .chip{white-space:normal;max-width:100%}
 }
