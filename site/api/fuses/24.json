@@ -1,0 +1,1 @@
+{"n":24,"amp":15,"name":"RADIO","cls":"acc","conf":"med","load":[2,6],"what":"Head unit switched supply.","note":"This is the circuit the CarPlay unit belongs on, and probably already is. 15 A is genuine capacity for a head unit — if anything audio-related is currently tapped elsewhere, this is where it should move to.","tapped":false}

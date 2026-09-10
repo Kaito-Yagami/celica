@@ -1,0 +1,1 @@
+{"n":14,"amp":5,"name":"ECU-IG","cls":"ig","conf":"hi","load":[0.3,0.9],"what":"Ignition feed to engine and chassis ECUs.","note":"Never tap. Any voltage dip here is a running fault.","tapped":false}

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Maintenance checklist, service log and pre-MOT check for a 2003 Celica T-Sport.">
+<title>Garage — Celica T-Sport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="index.html"><i class="mk"></i><b>CELICA</b><span>ZZT231</span></a>
+    <button class="burger" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav class="main">
+      <a href="index.html">Car</a>
+      <a href="issues.html">Issues</a>
+      <a href="mods.html">Mods</a>
+      <a href="electrical.html">Electrical</a>
+      <a href="manual.html">Manual</a>
+      <a href="specs.html">Specs</a>
+      <a href="garage.html">Garage</a>
+      <a href="projects.html">Projects</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="page-in">
+
+  <section class="sec tight">
+    <div class="wrap">
+      <p class="eyebrow">05 — Garage</p>
+      <h1 style="font-size:clamp(24px,3.6vw,34px);margin-bottom:12px">Checks, log and MOT</h1>
+      <p class="lede" id="lede"></p>
+      <div class="note amber" style="margin-top:20px;max-width:70ch">
+        <div class="hd">No service intervals here, deliberately</div>
+        <p>MA-1 says it plainly: the periodic maintenance schedule lives in the owner's
+        handbook supplement, which is market-specific, and it is not part of this manual.
+        Rather than invent mileages, this page gives you the manual's actual inspection
+        list and lets you record when you last did each thing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- service log ------------------------------------------------------ -->
+  <section class="sec tight">
+    <div class="wrap">
+      <div class="spread" style="margin-bottom:16px">
+        <div><p class="eyebrow">Record</p><h2>Service log</h2></div>
+        <button class="btn primary" id="addEntry">＋ Add entry</button>
+      </div>
+
+      <div class="card" id="logForm" hidden>
+        <div class="grid g4" style="gap:10px;margin-bottom:12px">
+          <label><span class="lbl">Date</span><input type="date" id="lgDate"></label>
+          <label><span class="lbl">Mileage</span><input type="number" id="lgMiles" placeholder="e.g. 96500"></label>
+          <label><span class="lbl">Cost</span><input type="text" id="lgCost" placeholder="£"></label>
+          <label><span class="lbl">Who</span><input type="text" id="lgWho" placeholder="Me / garage"></label>
+        </div>
+        <label><span class="lbl">What was done</span>
+          <textarea id="lgWhat" placeholder="Oil and filter, 4.2 L 5W-30. Checked front pads — 7 mm left."></textarea></label>
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary" id="lgSave">Save entry</button>
+          <button class="btn ghost" id="lgCancel">Cancel</button>
+        </div>
+      </div>
+
+      <div id="log" class="stack" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- checklist -------------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <div class="spread" style="margin-bottom:16px">
+        <div><p class="eyebrow">From the manual</p><h2>Inspection checklist</h2></div>
+        <div class="row">
+          <span class="chip" id="ckCount">—</span>
+          <button class="btn ghost" id="ckReset">Clear all</button>
+        </div>
+      </div>
+      <div class="stack" id="checks"></div>
+    </div>
+  </section>
+
+  <!-- MOT -------------------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <div class="spread" style="margin-bottom:16px">
+        <div><p class="eyebrow">Before the test</p><h2>Pre-MOT check</h2></div>
+        <div class="row">
+          <span class="chip" id="motCount">—</span>
+          <button class="btn ghost" id="motReset">Clear</button>
+        </div>
+      </div>
+      <p class="lede" style="margin-bottom:18px">
+        Built from the manual's own service limits and the items most likely to catch a
+        modified car. Each one says why it is here.
+      </p>
+      <div class="grid g2" id="mot"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div>
+      <p><b style="color:var(--tx)">Garage</b></p>
+      <p>Log and checkboxes are stored in this browser only. Nothing is uploaded anywhere.</p>
+    </div>
+    <div><p><a href="index.html">Home</a> · <a href="specs.html">Specs</a> · <a href="manual.html">Manual</a></p></div>
+  </div>
+</footer>
+
+<script src="data/manual.js"></script>
+<script src="data/maint.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/garage.js"></script>
+</body>
+</html>

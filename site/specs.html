@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Torque figures, service limits, fluid capacities and a rolling-radius calculator for a 2003 Celica T-Sport.">
+<title>Specs — Celica T-Sport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="index.html"><i class="mk"></i><b>CELICA</b><span>ZZT231</span></a>
+    <button class="burger" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav class="main">
+      <a href="index.html">Car</a>
+      <a href="issues.html">Issues</a>
+      <a href="mods.html">Mods</a>
+      <a href="electrical.html">Electrical</a>
+      <a href="manual.html">Manual</a>
+      <a href="specs.html">Specs</a>
+      <a href="garage.html">Garage</a>
+      <a href="projects.html">Projects</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="page-in">
+
+  <section class="sec tight">
+    <div class="wrap">
+      <p class="eyebrow">03 — Specifications</p>
+      <h1 style="font-size:clamp(24px,3.6vw,34px);margin-bottom:12px">The numbers you stop and look up</h1>
+      <p class="lede">
+        Every value here was read off the rendered manual page by eye, because the PDF's own
+        text layer is corrupted. Each row links back to the figure it came from — check it
+        before you torque anything that matters.
+      </p>
+    </div>
+  </section>
+
+  <!-- wheel calculator ------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <p class="eyebrow">Rolling radius</p>
+      <h2 style="margin-bottom:8px">What the 19s did to the speedo</h2>
+      <p class="lede" style="margin-bottom:22px">
+        This car left the factory on 205/55R15. A taller rolling radius makes a speedo
+        read <em>low</em> — the one direction the law and the manual both forbid.
+      </p>
+
+      <div class="calc">
+        <div class="card calc-in">
+          <span class="lbl">Fitted tyre</span>
+          <div class="row" style="gap:8px;margin-bottom:14px">
+            <select id="preset" style="flex:1 1 100%"></select>
+          </div>
+          <div class="tri">
+            <label><span class="lbl">Width</span><input type="number" id="tw" value="215" min="115" max="355" step="5"></label>
+            <label><span class="lbl">Profile</span><input type="number" id="tp" value="35" min="20" max="85" step="5"></label>
+            <label><span class="lbl">Rim</span><input type="number" id="tr" value="19" min="12" max="24" step="1"></label>
+          </div>
+          <div class="hair"></div>
+          <span class="lbl">Compared against</span>
+          <p class="mono num" id="oemLine" style="margin:0;font-size:14px">205/55R15</p>
+          <p class="faint" style="font-size:11.5px;margin:8px 0 0">
+            Uses nominal section width and aspect ratio. Real fitted diameter varies a
+            little by make and by pressure — measure a rolling circumference if you need
+            it exact.
+          </p>
+        </div>
+
+        <div class="calc-out">
+          <div class="grid g3" style="gap:1px;background:var(--ink-3);border:1px solid var(--ink-3);border-radius:var(--r);overflow:hidden">
+            <div class="stat"><div class="readout"><div class="v"><span id="oDia">—</span><small>mm</small></div><div class="k">Diameter</div></div><p class="faint" id="oDiaSub">—</p></div>
+            <div class="stat"><div class="readout"><div class="v"><span id="oCirc">—</span><small>mm</small></div><div class="k">Circumference</div></div><p class="faint" id="oCircSub">—</p></div>
+            <div class="stat"><div class="readout hot"><div class="v"><span id="oPct">—</span><small>%</small></div><div class="k">Vs standard</div></div><p class="faint" id="oPctSub">—</p></div>
+          </div>
+
+          <div class="card" style="margin-top:14px">
+            <span class="lbl">At an indicated speed, you are actually doing</span>
+            <div class="tbl-wrap" style="border:0">
+              <table id="spdTbl">
+                <thead><tr><th>Speedo shows</th><th>True speed</th><th>Error</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px">
+            <span class="lbl">Against the manual's own tolerance — SS-54</span>
+            <div class="tbl-wrap" style="border:0">
+              <table id="bandTbl">
+                <thead><tr><th>True speed</th><th>Manual allows</th><th>Yours reads</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <p class="faint" style="font-size:11.5px;margin:12px 0 0" id="bandNote"></p>
+          </div>
+
+          <div id="rideNote"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- torque ----------------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <div class="spread" style="margin-bottom:14px">
+        <div>
+          <p class="eyebrow">Torque</p>
+          <h2>Tightening specification</h2>
+        </div>
+        <div class="row">
+          <input type="search" id="tq" placeholder="Filter — hub, caliper, arm…" style="width:230px" aria-label="Filter torque table">
+          <div class="row" id="units" style="gap:4px"></div>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table id="tqTbl">
+          <thead><tr><th>Part tightened</th><th id="uHead">N·m</th><th>Source</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- fluids ----------------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <p class="eyebrow">Fluids</p>
+      <h2 style="margin-bottom:16px">Capacities and grades</h2>
+      <div class="grid g2" id="fluids"></div>
+    </div>
+  </section>
+
+  <!-- service data ----------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <p class="eyebrow">Service data</p>
+      <h2 style="margin-bottom:16px">Limits and clearances</h2>
+      <div class="stack" id="groups"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div>
+      <p><b style="color:var(--tx)">Specifications</b></p>
+      <p>Transcribed by eye from Toyota RM744U1/U2. Check the linked figure before relying on a value.</p>
+    </div>
+    <div><p><a href="index.html">Home</a> · <a href="manual.html">Manual</a> · <a href="garage.html">Garage</a></p></div>
+  </div>
+</footer>
+
+<script src="data/manual.js"></script>
+<script src="data/specs.js"></script>
+<script src="data/mods.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/specspage.js"></script>
+</body>
+</html>

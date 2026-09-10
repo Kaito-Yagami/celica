@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Interactive fusebox map, circuit classes and electrical load budget for a 2003 Celica T-Sport.">
+<title>Electrical — Celica T-Sport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="index.html"><i class="mk"></i><b>CELICA</b><span>ZZT231</span></a>
+    <button class="burger" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav class="main">
+      <a href="index.html">Car</a>
+      <a href="issues.html">Issues</a>
+      <a href="mods.html">Mods</a>
+      <a href="electrical.html">Electrical</a>
+      <a href="manual.html">Manual</a>
+      <a href="specs.html">Specs</a>
+      <a href="garage.html">Garage</a>
+      <a href="projects.html">Projects</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="page-in">
+
+  <section class="sec tight">
+    <div class="wrap">
+      <p class="eyebrow">01 — Electrical</p>
+      <h1 style="font-size:clamp(26px,4vw,38px);margin-bottom:14px">The fusebox, as it actually is</h1>
+      <p class="lede">
+        Every slot below was read off the label on this car. The manual bundled with this site
+        shows a different box — 23 fuses, US market, three years earlier. When they disagree,
+        this page follows the car.
+      </p>
+      <div class="stats" style="margin-top:30px">
+        <div class="stat"><div class="readout"><div class="v"><span data-count="35">0</span></div><div class="k">Fuse positions</div></div><p class="faint">One blanked, 34 in use</p></div>
+        <div class="stat"><div class="readout hot"><div class="v"><span data-count="4">0</span></div><div class="k">Taps fitted</div></div><p class="faint">Slots 18, 19, 26, 35</p></div>
+        <div class="stat"><div class="readout"><div class="v"><span data-count="80">0</span><small>A</small></div><div class="k">Alternator</div></div><p class="faint">12 V 80 A rated, SS-27</p></div>
+        <div class="stat"><div class="readout"><div class="v">13.2<small>–14.8 V</small></div><div class="k">Regulated</div></div><p class="faint">Voltage regulator range</p></div>
+        <div class="stat"><div class="readout"><div class="v"><span id="freeA">0</span><small>A</small></div><div class="k">Spare on taps</div></div><p class="faint">At 80 % continuous</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- fusebox ---------------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <div class="spread" style="margin-bottom:16px">
+        <div>
+          <p class="eyebrow">Interactive map</p>
+          <h2>Instrument panel J/B</h2>
+        </div>
+        <div class="row" id="filters"></div>
+      </div>
+
+      <div class="fb-layout">
+        <div class="card fb-box">
+          <div class="fb-hint mono">Driver side, behind the lower dash trim · click any fuse</div>
+          <div id="fbSvg"></div>
+          <div class="fb-legend" id="legend"></div>
+        </div>
+        <aside class="card fb-detail" id="detail" aria-live="polite"></aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- the tap rules ---------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <div class="grid g2" style="align-items:start">
+        <div data-reveal>
+          <p class="eyebrow">Before you add another one</p>
+          <h2 style="margin-bottom:16px">What a fuse tap actually does</h2>
+          <div class="note red">
+            <div class="hd">The fuse is not the limit — the wire is</div>
+            <p>An add-a-circuit does not create a new supply. It hangs your load on the
+            <b>same feed wire and the same junction block trace</b> that already serves the
+            original circuit. You can fit a 15 A fuse in the tap leg and still be over the
+            limit of the 0.85 mm² wire feeding the position. Size the tap against the
+            original circuit's wiring, not against the plastic you plugged into it.</p>
+          </div>
+          <div class="note amber">
+            <div class="hd">Budget to 80 %, not 100 %</div>
+            <p>A blade fuse is designed to carry its rating indefinitely and blow well above
+            it — which means it will happily sit at 95 % while the wire behind it warms up
+            for years. Every figure on this page uses 80 % of rating as the usable ceiling.</p>
+          </div>
+          <div class="note cool">
+            <div class="hd">Anything over about 5 A wants a relay</div>
+            <p>Heated seats are the example on this car: roughly 8 A for the pair. That
+            belongs on its own fused feed from the battery, switched by a relay whose
+            <em>coil</em> is the only thing touching an existing circuit. A coil draws
+            about 150 mA — that is what a fuse tap is for.</p>
+          </div>
+        </div>
+
+        <div data-reveal>
+          <p class="eyebrow">Verify, don't assume</p>
+          <h2 style="margin-bottom:8px">Class probe</h2>
+          <p class="muted" style="margin-bottom:16px">
+            Because the manual's fusebox is the wrong one, every circuit class here is
+            inferred, not sourced. Put a test lamp or a meter on the slot, work through the
+            four key positions, and this will tell you what you actually have — and remember it.
+          </p>
+          <div class="card" id="probe"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- load budget ------------------------------------------------------ -->
+  <section class="sec tight">
+    <div class="wrap">
+      <p class="eyebrow">Planning</p>
+      <h2 style="margin-bottom:8px">Load budget</h2>
+      <p class="lede" style="margin-bottom:24px">
+        Assign each mod to the circuit that feeds it. Draw figures start as estimates —
+        clamp the real number and type it in, and the estimate flag clears.
+      </p>
+
+      <div class="tbl-wrap" style="margin-bottom:26px">
+        <table id="loadTbl">
+          <thead><tr>
+            <th>Load</th><th>On circuit</th><th>Typical A</th><th>Peak A</th><th>Basis</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <h3 style="margin:0 0 12px">Per-circuit result</h3>
+      <div class="grid g2" id="budget"></div>
+
+      <div class="note cool" style="margin-top:24px">
+        <div class="hd">Whole-car headroom</div>
+        <p id="altNote">—</p>
+      </div>
+
+      <div class="row" style="margin-top:18px">
+        <button class="btn" id="resetBudget">Reset to estimates</button>
+        <span class="chip" id="saveState">Saved locally</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- manual reference -------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <p class="eyebrow">From the manual</p>
+      <h2 style="margin-bottom:8px">Context only</h2>
+      <p class="lede" style="margin-bottom:22px">
+        These are the 2000 US-market boxes. Useful for understanding where power enters the
+        car and what lives in the engine bay — not for identifying a fuse on this one.
+      </p>
+      <div class="grid g3" id="manFigs"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div>
+      <p><b style="color:var(--tx)">Electrical</b></p>
+      <p>Fuse data transcribed from this car's own label. Loads are estimates until measured.</p>
+    </div>
+    <div><p><a href="index.html">Home</a> · <a href="specs.html">Specs</a> · <a href="manual.html">Manual</a></p></div>
+  </div>
+</footer>
+
+<script src="data/manual.js"></script>
+<script src="data/fuses.js"></script>
+<script src="data/mods.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/electrical.js"></script>
+</body>
+</html>

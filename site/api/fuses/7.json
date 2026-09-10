@@ -1,0 +1,1 @@
+{"n":7,"amp":5,"name":"BODY ECU-IG","cls":"ig","conf":"hi","load":[0.3,0.8],"what":"Ignition feed to the body ECU.","note":"Leave alone. Load or noise here upsets central locking, lighting timers and the alarm.","tapped":false}

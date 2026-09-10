@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Celica Build Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#F3F2EF; --surface:#FFFFFF; --surface-2:#EDEBE7; --surface-3:#E4E1DB;
+  --ink:#1A1B1E; --muted:#6B6862; --faint:#918D86;
+  --line:#DCD9D3; --line-strong:#C4C0B8;
+  --accent:#D95A0B; --accent-soft:rgba(217,90,11,.10);
+  --red:#B92B22; --amber:#B07800; --cool:#3D6B8C; --green:#3E7A4E;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  --display:"Archivo","IBM Plex Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#141518; --surface:#1C1E22; --surface-2:#232629; --surface-3:#2B2E33;
+  --ink:#E9E7E3; --muted:#9A968F; --faint:#7A766F;
+  --line:#2B2E33; --line-strong:#3A3E44;
+  --accent:#FF7A29; --accent-soft:rgba(255,122,41,.13);
+  --red:#FF5347; --amber:#FFB13D; --cool:#77AFD4; --green:#63C07E;
+}}
+:root[data-theme="dark"]{
+  --ground:#141518; --surface:#1C1E22; --surface-2:#232629; --surface-3:#2B2E33;
+  --ink:#E9E7E3; --muted:#9A968F; --faint:#7A766F;
+  --line:#2B2E33; --line-strong:#3A3E44;
+  --accent:#FF7A29; --accent-soft:rgba(255,122,41,.13);
+  --red:#FF5347; --amber:#FFB13D; --cool:#77AFD4; --green:#63C07E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+
+/* header */
+header{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
+.hrow{display:flex;align-items:center;gap:14px;padding:12px 0}
+.ring{flex:0 0 auto;position:relative;width:46px;height:46px}
+.ring svg{transform:rotate(-90deg);display:block}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.htitle{flex:1;min-width:0}
+.htitle h1{font-size:16px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.htitle p{margin:1px 0 0;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.03em}
+.hbtns{display:flex;gap:6px;flex:0 0 auto}
+.btn{background:var(--surface-2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--surface-3);border-color:var(--line-strong)}
+.btn.warn{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,var(--line))}
+.savepip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;color:var(--faint);padding:0 0 10px}
+.savepip i{width:6px;height:6px;border-radius:50%;background:var(--faint);display:block}
+.savepip.on i{background:var(--green)}
+
+/* intro */
+.intro{padding:26px 0 6px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.intro h2{font-size:clamp(24px,4.5vw,34px);font-weight:700;letter-spacing:-.02em;margin:6px 0 8px;line-height:1.08}
+.intro p{color:var(--muted);max-width:62ch;margin:0 0 14px}
+
+/* stage cards */
+.stages{display:flex;flex-direction:column;gap:10px;padding:14px 0 0}
+details.stage{background:var(--surface);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+details.stage[open]{border-color:var(--line-strong)}
+details.stage.done{border-left:3px solid var(--green)}
+details.stage.part{border-left:3px solid var(--accent)}
+summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px}
+summary::-webkit-details-marker{display:none}
+summary:hover{background:var(--surface-2)}
+.sn{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);flex:0 0 26px}
+.st{flex:1;min-width:0}
+.st b{font-family:var(--display);font-size:15.5px;font-weight:600;display:block}
+.st span{font-size:12.5px;color:var(--muted);display:block;margin-top:1px}
+.bar{flex:0 0 66px;height:5px;background:var(--surface-3);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+details.stage.done .bar i{background:var(--green)}
+.cnt{font-family:var(--mono);font-size:11px;color:var(--faint);flex:0 0 auto;font-variant-numeric:tabular-nums}
+.chev{flex:0 0 auto;color:var(--faint);transition:transform .2s}
+details[open]>summary .chev{transform:rotate(90deg)}
+.body{padding:2px 14px 16px;border-top:1px solid var(--line)}
+
+/* tasks */
+ul.tasks{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:2px}
+ul.tasks li{margin:0}
+label.task{display:flex;gap:11px;align-items:flex-start;padding:8px 8px 8px 6px;border-radius:3px;cursor:pointer}
+label.task:hover{background:var(--surface-2)}
+label.task input{margin:2px 0 0;width:17px;height:17px;flex:0 0 auto;accent-color:var(--accent);cursor:pointer}
+label.task span{font-size:14px}
+label.task input:checked+span{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--line-strong)}
+
+/* notes */
+.lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:18px 0 6px;display:block}
+textarea{width:100%;min-height:74px;background:var(--surface-2);border:1px solid var(--line);border-radius:3px;padding:10px 11px;font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--ink);resize:vertical}
+textarea::placeholder{color:var(--faint)}
+textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+
+/* schematic prompt */
+details.sch{margin-top:16px;border:1px dashed var(--line-strong);border-radius:3px;background:var(--accent-soft)}
+details.sch>summary{padding:11px 13px;gap:9px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:600}
+details.sch>summary:hover{background:transparent;text-decoration:underline}
+.schbody{padding:0 13px 13px}
+pre.prompt{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:12px;font-family:var(--mono);font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;max-height:340px;overflow:auto}
+.schrow{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.wc{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.05em}
+.hint{font-size:12px;color:var(--muted);margin:0 0 9px}
+
+/* legend */
+.legend{margin-top:12px;border:1px solid var(--line);border-radius:3px;background:var(--surface);overflow:hidden}
+.lrow{display:grid;grid-template-columns:26px 1fr;gap:11px;align-items:start;padding:8px 12px;border-bottom:1px solid var(--line)}
+.lrow:last-child{border-bottom:none}
+.lnum{display:inline-grid;place-items:center;width:20px;height:20px;border:1px solid var(--accent);border-radius:50%;font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--accent);margin-top:1px}
+.lrow b{font-size:13.5px;font-weight:600;display:block}
+.lrow em{font-style:normal;font-size:12.5px;color:var(--muted);display:block;margin-top:1px}
+.lblrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.lblrow .lbl{margin-bottom:6px}
+.minibtn{background:none;border:none;padding:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);cursor:pointer;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.minibtn:hover{color:var(--accent)}
+.opt{display:flex;gap:9px;align-items:flex-start;margin-top:11px;padding:9px 11px;background:var(--surface);border:1px solid var(--line);border-radius:3px;cursor:pointer}
+.opt input{margin:2px 0 0;width:16px;height:16px;flex:0 0 auto;accent-color:var(--accent);cursor:pointer}
+.opt span{font-size:12.5px;color:var(--muted)}
+.opt span b{color:var(--ink);font-weight:600;display:block;font-size:13px}
+
+/* measurements */
+.msheet{background:var(--surface);border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-top:10px}
+.mrow{display:grid;grid-template-columns:44px 1fr 108px;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow:nth-child(odd){background:var(--surface-2)}
+.mrow code{font-family:var(--mono);font-size:11.5px;color:var(--accent);font-weight:600}
+.mrow p{margin:0;font-size:13.5px}
+.mrow p em{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.mrow input{width:100%;font-family:var(--mono);font-size:13px;background:var(--ground);border:1px solid var(--line);border-radius:3px;padding:6px 8px;color:var(--ink);font-variant-numeric:tabular-nums}
+.mrow input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+@media (max-width:560px){
+  .mrow{grid-template-columns:40px 1fr;grid-template-areas:"id name" ". val";row-gap:6px}
+  .mrow code{grid-area:id}.mrow p{grid-area:name}.mrow input{grid-area:val}
+  .hbtns .btn.hide-sm{display:none}
+}
+section.blk{padding:34px 0 0}
+section.blk>h3{font-size:19px;font-weight:700;letter-spacing:-.01em}
+section.blk>p.sub{color:var(--muted);margin:6px 0 0;max-width:62ch}
+footer{margin-top:44px;padding:20px 0 56px;border-top:1px solid var(--line);color:var(--faint);font-size:12px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--ground);font-family:var(--mono);font-size:12px;padding:9px 15px;border-radius:3px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<header>
+  <div class="wrap">
+    <div class="hrow">
+      <div class="ring">
+        <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+          <circle cx="23" cy="23" r="19" fill="none" stroke="var(--surface-3)" stroke-width="5"></circle>
+          <circle id="ringfg" cx="23" cy="23" r="19" fill="none" stroke="var(--accent)" stroke-width="5"
+                  stroke-linecap="round" stroke-dasharray="119.4" stroke-dashoffset="119.4"></circle>
+        </svg>
+        <b id="ringpct">0%</b>
+      </div>
+      <div class="htitle">
+        <h1>Celica Infinity Bar — build tracker</h1>
+        <p id="hcount">0 of 0 steps complete</p>
+      </div>
+      <div class="hbtns">
+        <button class="btn hide-sm" id="btn-export" type="button">Export</button>
+        <button class="btn hide-sm" id="btn-import" type="button">Import</button>
+        <button class="btn warn" id="btn-reset" type="button">Reset</button>
+      </div>
+    </div>
+    <div class="savepip" id="savepip"><i></i><span id="savetext">Saved in this browser</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="intro">
+    <span class="eyebrow">Toyota Celica T230 · tailgate light bar</span>
+    <h2>Ten stages, seventy-odd steps, one panel you only get to cut once.</h2>
+    <p>Tick as you go, note what the car actually turned out to be, and open the schematic prompt in any stage to generate a visual for the step you're about to do. Everything saves as you type.</p>
+  </div>
+
+  <div class="stages" id="stages"></div>
+
+  <section class="blk" id="meas">
+    <h3>Measurement sheet</h3>
+    <p class="sub">The numbers that decide the design. M6 is the one the whole build hangs on — the shallowest skin-to-inner-panel gap across the channel line.</p>
+    <div class="msheet" id="msheet"></div>
+  </section>
+
+  <section class="blk">
+    <h3>Using the schematic prompts</h3>
+    <p class="sub">Each stage carries a prompt written for an image model. Three things make the difference between a usable schematic and a poster:</p>
+    <ul style="max-width:62ch;color:var(--muted);font-size:14px;margin-top:10px">
+      <li><strong style="color:var(--ink)">Ask for numbered callouts, not words.</strong> Image models garble long labels. The prompts request circled numerals; you add the legend yourself.</li>
+      <li><strong style="color:var(--ink)">Generate two or three and keep the clearest.</strong> Geometry varies a lot between seeds on technical subjects.</li>
+      <li><strong style="color:var(--ink)">Treat the result as a sketch, not a drawing.</strong> It's for thinking and for showing someone what you mean — dimensions still come from your own measurements.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Companion to the build plan v2 · progress and notes save automatically · export a backup before you clear browser data.
+  </footer>
+</main>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="filein" accept="application/json,.json" hidden>
+
+<script>
+(function(){
+"use strict";
+
+var STYLE_SHORT = "Flat-colour technical line art, thin even lines, no shading, no photorealism. Dark charcoal background, grey steel, orange new parts, pale blue glass. Orange callout circles on short leader lines. 16:9.";
+
+var STYLE = "STYLE\nWorkshop-manual technical illustration. Precise thin linework of consistent weight, flat colour fills, no photorealism, no gradients, no cast shadows. Background dark charcoal #1C1E22. Existing steel structure in cool grey #9AA3AC. New or modified parts in warm orange #FF7A29. Glass and optical parts in pale blue #9FC6DE. LEDs in the colour they emit. Callout circles and leader lines in warm orange. 16:9, drawing centred, generous margin for the callouts.";
+
+function rulesLong(n){
+  return "RULES - follow exactly\n" +
+  "1. Draw exactly " + n + " callouts, numbered 1 to " + n + ". Use each numeral once and once only. Do not repeat one, do not skip one, do not invent extra callouts, letters or symbols.\n" +
+  "2. Every callout in the list must appear. Nothing not on the list gets a callout.\n" +
+  "3. The only characters anywhere in the image are those numerals inside their circles. No words, no title, no written dimensions, no signature.\n" +
+  "4. Each numeral sits in a thin circle at the end of a short straight leader line touching the part it names. Leader lines must not cross.\n" +
+  "5. Dimension lines, where mentioned, are drawn with arrowheads but carry no numbers or labels.\n" +
+  "6. Exclude: people, hands, brand logos, readable number plates, background scenery.";
+}
+
+function buildPrompt(s, labelled, detailed){
+  var cs = s.p.callouts, n = cs.length, out = [];
+  if(detailed){
+    out.push("CONTEXT\n" + s.p.context);
+    out.push("VIEW\n" + s.p.view);
+    out.push("CALLOUTS - exactly " + n + ", numbered 1 to " + n + ", each used once\n" +
+      cs.map(function(c,i){ return (i+1) + " - " + c[2]; }).join("\n"));
+    out.push(STYLE);
+    out.push(rulesLong(n));
+  } else {
+    out.push(s.p.brief);
+    out.push("Number these 1 to " + n + ", each numeral used once:\n" +
+      cs.map(function(c,i){ return (i+1) + " " + c[1]; }).join("\n"));
+    out.push(STYLE_SHORT + " No text anywhere except the numerals.");
+  }
+  if(labelled){
+    out.push((detailed ? "LABEL VARIANT\n" : "") +
+      "Write each numeral followed by this short name in small uppercase, and no other text:\n" +
+      cs.map(function(c,i){ return (i+1) + " " + c[0].toUpperCase(); }).join("\n"));
+  }
+  return out.join("\n\n");
+}
+
+var STAGES = [
+{id:"s0", n:"00", t:"Donor tailgate", d:"Buy the panel you're allowed to ruin",
+ tasks:[
+  "Source a used T230 tailgate - any colour, sound lower corners",
+  "Strip glass, garnish, trim board, latch and loom; bag and label every clip",
+  "Inspect for existing rust and filler, especially the lower corners and the glass flange",
+  "Weigh the bare panel and record it as M16 (before)",
+  "Compare the donor pressing to the car's - repeat M6 and M12 on both"
+ ],
+ p:{
+  brief:"Workshop-manual technical line drawing. Exploded rear three-quarter view of a 2003 Toyota Celica hatchback tailgate, parts floating apart along one diagonal axis with thin dashed lines back to their positions.",
+  context:"Reference drawing for a car modification build log. Stage 00 of a project that cuts a full-width light bar into the rear tailgate of a 2003 Toyota Celica T230, a three-door coupe with a bonded rear glass hatch. This drawing shows the donor tailgate broken down into the parts that come off during the strip-down.",
+  view:"Exploded assembly view, three-quarter from behind and slightly above. All parts float apart along one consistent diagonal axis, each connected back to its home position by a thin dashed alignment line.",
+  callouts:[
+   ["Outer skin","steel tailgate outer panel, centre of the drawing","the pressed steel tailgate outer panel, the largest object and the centre of the drawing, with a recessed rectangular number plate area low on its face"],
+   ["Rear glass","rear glass, floating clear of its aperture","the bonded rear glass, floating clear of its aperture, with a faint heated-screen element pattern across it"],
+   ["Garnish strip","garnish strip, floating forward, above the plate recess","the horizontal exterior garnish strip that spans the panel directly above the number plate recess, floating forward of the skin"],
+   ["Trim board","interior trim board, floating behind","the moulded plastic interior trim board that covers the inside face of the tailgate, floating behind the skin"],
+   ["Latch","latch, floating below the bottom edge","the latch mechanism from the bottom centre edge of the tailgate, floating below it"],
+   ["Loom","wiring loom from the hinge boot, floating above","the wiring loom, drawn as a bundle emerging from a corrugated rubber boot at the top hinge area, floating above"],
+   ["Gas struts","gas struts, single callout on the left one","the pair of gas struts, one drawn on each side but sharing a single callout on the left-hand one"]
+  ]}},
+
+{id:"s1", n:"01", t:"Survey, mock-up and template", d:"The half-day that answers tint, depth and geometry",
+ tasks:[
+  "Complete measurements M1-M18 on the car",
+  "Take the OEM photometric references P1-P4 with the lux meter",
+  "Build the two-tier face mock-up: real mirror acrylic, real tint, one amber LED",
+  "Photograph the mock-up at 3 m and 20 m, in daylight and at night",
+  "Decide tunnel depth - option A, B or C - from M6",
+  "Decide flat chord vs segmented flats from M12",
+  "Cut the template: cardboard, then 3 mm MDF, then 1.5 mm aluminium",
+  "CAD the channel, tray, housing and lens from one sketch",
+  "Confirm at least 40 mm of untouched skin to every shut line, hinge, latch and glass flange"
+ ],
+ p:{
+  brief:"Workshop-manual technical line drawing. Flat rear elevation of a car tailgate marked out for cutting, square to the viewer, with unnumbered dimension lines and arrowheads.",
+  context:"Stage 01: marking out where the light bar channel will be cut, and making a template. The reader needs the position of the channel on the panel and the clearance it keeps from surrounding structure.",
+  view:"Flat orthographic rear elevation of the tailgate, square to the viewer with no perspective, as a setting-out drawing. Unnumbered dimension lines with arrowheads run beneath the channel and beside its height.",
+  callouts:[
+   ["Tailgate outline","tailgate outline filling the frame","the outline of the tailgate panel filling most of the frame"],
+   ["Plate recess","number plate recess, low centre","the recessed number plate area low on the panel, drawn as an empty rectangle"],
+   ["Channel","the marked channel: horizontal rectangle 1100 x 50 mm above the recess","the light bar channel marked out on the panel: a long horizontal rectangle roughly 1100 mm wide and 50 mm tall, centred across the panel above the plate recess"],
+   ["Tail lamps","tail lamp clusters either side, ghosted","the two tail lamp clusters on the body either side of the tailgate, drawn ghosted in outline to show where the channel must stop"],
+   ["Clearance band","hatched 40 mm clearance band around the channel","a hatched clearance band about 40 mm wide running around the channel, separating it from the nearest shut line and the glass flange"],
+   ["Template","aluminium template sheet beside the panel, same aperture","a separate flat aluminium template sheet lying beside the panel, carrying the identical channel aperture"],
+   ["Depth probes","five depth-probe arrows spaced along the channel","five short arrows entering the panel face at equal spacing along the channel line, indicating where internal depth is measured"]
+  ]}},
+
+{id:"s2", n:"02", t:"Cut the channel", d:"Outer skin only, and never a continuous weld",
+ tasks:[
+  "Scribe the channel from the aluminium template",
+  "Torch-check behind the line for reinforcements, the wiper motor and washer plumbing",
+  "Drill 6 mm relief holes at every internal corner",
+  "Cut 5 mm inside the line, then file and flap-wheel to the line",
+  "Fold the tray from 1.2 mm CR4 with 25 mm return flanges",
+  "Weld-through primer on every mating face",
+  "Stitch weld 15 mm on, 40 mm off, alternating sides, cooling between passes",
+  "Recheck shut lines and panel flatness after welding"
+ ],
+ p:{
+  brief:"Workshop-manual technical line drawing. Cutaway three-quarter view of a steel car panel being cut and a fabricated tray welded in behind it, with one enlarged corner inset.",
+  context:"Stage 02: cutting the channel into the steel outer skin and welding in a fabricated tray. The drawing must show that only the outer skin is cut, that the cut runs inside the scribed line, and that the weld is stitched rather than continuous.",
+  view:"Cutaway three-quarter view of a section of car body panel with part of the outer skin peeled away so the structure behind is visible. A small enlarged detail inset sits in one corner of the frame.",
+  callouts:[
+   ["Scribed line","scribed channel outline on the skin","the scribed rectangular outline of the channel on the outer skin"],
+   ["Relief holes","relief hole at each internal corner","a small drilled relief hole at each of the four internal corners of that rectangle, all four sharing one callout"],
+   ["Cut line","cut line 5 mm inside the scribed line","a second cut line running about 5 mm inside the scribed line, drawn as the line actually being cut"],
+   ["Tray","folded steel tray with flanges, rising in from behind","a folded steel tray with 25 mm return flanges, rising into the aperture from behind"],
+   ["Stitch welds","stitch welds: short beads, wide gaps, alternating sides","the weld pattern along the tray flange, drawn as short weld beads roughly 15 mm long separated by gaps roughly 40 mm wide, alternating from one side of the aperture to the other"],
+   ["Inner panel","inner panel behind, semi-transparent, uncut","the untouched inner panel behind the skin, drawn semi-transparent to show it is not cut"],
+   ["Detail inset","enlarged corner inset","the enlarged corner detail inset showing the relief hole and the offset between the scribed line and the cut line"]
+  ]}},
+
+{id:"s3", n:"03", t:"Corrosion protection and paint", d:"This panel will hold standing water the day a drain blocks",
+ tasks:[
+  "Dress the welds and abrade back to bright steel",
+  "Phosphoric etch, rinse, dry",
+  "2K epoxy primer inside and out",
+  "Seam-seal every internal joint of the tray, both sides",
+  "Drill two 8 mm drains with grommets at the tray's lowest points",
+  "Water-test the drains with the tailgate shut and the car level",
+  "Base coat and 2K clear over the whole panel",
+  "Cavity wax the tailgate interior after paint"
+ ],
+ p:{
+  brief:"Workshop-manual technical line drawing. Vertical cross-section through a welded steel tray in a car panel, coating layers drawn at exaggerated thickness, outside to the left.",
+  context:"Stage 03: protecting the newly welded steel from corrosion. A coating build-up diagram showing the order and position of each protective layer, and how water leaves the tray.",
+  view:"Vertical cross-section through the welded tray and surrounding panel, cut left to right, coating layers at exaggerated thickness. Outside the panel is to the left, the enclosed tailgate interior to the right.",
+  callouts:[
+   ["Topcoat","base coat and clear lacquer on the outer face","colour base coat and clear lacquer, two thin layers on the outer face"],
+   ["Epoxy primer","epoxy primer on both faces of the steel","2K epoxy primer, a layer on both faces of the steel"],
+   ["Steel","steel skin and welded tray in solid section","the steel skin and welded tray shown in solid section"],
+   ["Seam sealer","seam sealer bead in the internal corner","a bead of seam sealer filling the internal corner where the tray flange meets the skin"],
+   ["Drain","drain hole with rubber grommet at the low point","an 8 mm drain hole with a rubber grommet at the lowest point of the tray floor"],
+   ["Water path","blue arrow, water running out of the drain","a blue arrow tracing water running along the tray floor and out through that drain"],
+   ["Cavity wax","cavity wax, stippled film on interior surfaces","cavity wax drawn as a stippled film coating the enclosed interior surfaces"]
+  ]}},
+
+{id:"s4", n:"04", t:"Lamp module", d:"Tunnel above, functional emitters below",
+ tasks:[
+  "Build the housing - ABS solvent-welded, or ASA / SLA printed in segments",
+  "Bond the 2 mm first-surface rear mirror, perimeter adhesive only",
+  "Order the laser-cut face: mirror acrylic upper tier, clear windows lower tier",
+  "Flame-polish or wet-sand every visible acrylic edge",
+  "Mount the addressable strip in aluminium channel, baffled from direct view",
+  "Mount the amber zones and white zones on the lower-tier aluminium bar",
+  "Machine the butyl sealing channel and clamp strip; dry-fit the lens",
+  "Fit the PTFE breather vent at the highest point",
+  "Two-hour bench run of the full electronics inside the assembled module"
+ ],
+ p:{
+  brief:"Workshop-manual technical line drawing. Side cross-section through a two-tier automotive light bar: an infinity mirror tier above, a plain emitter tier below. Emitters face left, outside the car.",
+  context:"Stage 04, the most important drawing in the set: the internal construction of a two-tier light bar. The upper tier is an infinity mirror producing a receding tunnel of red light. The lower tier is a plain functional strip whose amber and white emitters fire straight out through clear windows, because they would lose most of their output behind the half-mirror.",
+  view:"Cross-section through the light bar module, cut vertically and viewed from the side so both tiers and the full internal stack are visible. Outside the car is to the left; the emitters and mirrors face left.",
+  callouts:[
+   ["Half mirror","half-silvered mirror front face, upper tier","the half-silvered mirror acrylic front face of the upper tier, on the outside of the module"],
+   ["Air gap","20 mm air gap between the mirrors","the air gap of roughly 20 mm between the two mirrors of the upper tier"],
+   ["Rear mirror","fully reflective mirror at the back","the fully reflective first-surface mirror at the back of the upper tier"],
+   ["Red LEDs","red LED strip firing inward behind a baffle","a red LED strip on an aluminium channel at the edge of the upper tier, firing inward across the gap from behind an opaque baffle so the emitter is hidden"],
+   ["Light path","rays bouncing between mirrors, one escaping forward","three light rays bouncing back and forth between the two mirrors, with one ray escaping forward out of the half-mirror"],
+   ["Clear window","clear window, lower tier, no mirror coating","the clear acrylic window of the lower tier, with no mirror coating"],
+   ["Amber emitters","amber emitters on an aluminium bar, firing straight out","high-power amber LED emitters on an aluminium bar in the lower tier, firing straight forward through that window"],
+   ["White emitters","white emitters at the end of the same bar","white LED emitters on the same bar at the end of the lower tier"],
+   ["Seal","butyl seal and clamp strip around the face","a butyl seal in a machined channel around the perimeter of the face, held by a clamp strip"],
+   ["Vent and drain","breather vent top, drain bottom","a small breather vent at the top of the housing and a drain at the bottom, sharing one callout on the vent"]
+  ]}},
+
+{id:"s5", n:"05", t:"Electronics and controller", d:"Five inputs, three colours, one priority rule",
+ tasks:[
+  "Build the 12 V to 5 V buck supply with fuse, reverse-polarity protection, TVS and bulk capacitors",
+  "Build the five optocoupler inputs: tail, brake, left, right, reverse",
+  "Fit the level shifter, 330 ohm series resistor and 1000 uF at the strip injection point",
+  "Build the MOSFET channels and constant-current drivers for amber and white",
+  "Write the priority state machine - indicator over reverse over brake over tail over wake-up",
+  "Gamma 2.2 ramp for the wake-up: 2 s in, 400 ms hold, 1 s out, once per unlock",
+  "Sync the flash timing to the car's own indicator signal",
+  "Enable the watchdog and test a deliberately forced hang",
+  "Wire the steady / MOT mode switch and prove it kills the sweep and the animation"
+ ],
+ p:{
+  brief:"Clean signal-flow block diagram for a 12 volt automotive LED controller. Rectangular blocks joined by lines with arrowheads, inputs on the left, outputs on the right, a ground rail along the bottom.",
+  context:"Stage 05: the control electronics for the light bar. A signal-flow block diagram, not a physical drawing - how five 12 volt signals from the car reach a microcontroller and how it drives three separate LED loads.",
+  view:"Block diagram on a flat background. Rectangular blocks connected by lines with arrowheads showing direction of flow, laid out left to right: inputs left, power and processing centre, outputs right. A ground rail runs along the bottom.",
+  callouts:[
+   ["Car inputs","five input lines entering from the car","a group of five input lines entering from the left edge, drawn as five parallel arrows from the vehicle's wiring"],
+   ["Optocouplers","optocoupler isolation stage, five symbols","an isolation stage containing five optocoupler symbols, one per input"],
+   ["Protection","fuse, MOSFET and suppression diode in series","a protection block containing a fuse symbol, a MOSFET symbol and a transient suppression diode symbol in series"],
+   ["Buck converter","12 V to 5 V converter block","a voltage converter block stepping 12 volts down to 5 volts, after the protection block"],
+   ["Microcontroller","microcontroller at the centre","the microcontroller block at the centre of the diagram"],
+   ["Watchdog","watchdog timer attached to it","a small watchdog timer block attached to the microcontroller"],
+   ["Level shifter","level shifter to an addressable LED strip","a logic level shifter block on the output side, feeding an addressable LED strip drawn as a chain of small square LEDs"],
+   ["Amber driver","driver and MOSFET to an amber LED array","a constant-current driver block with a MOSFET symbol, feeding an array of amber LEDs"],
+   ["White driver","second driver to a white LED array","a second driver block of the same kind feeding a smaller array of white LEDs"],
+   ["Mode switch","mode switch input on the left","a small switch symbol on the left feeding a separate input on the microcontroller"]
+  ]}},
+
+{id:"s6", n:"06", t:"Wiring and loom", d:"OEM circuits are triggers, never supplies",
+ tasks:[
+  "Mount the controller in the boot - dry, serviceable, off the tailgate",
+  "Pull the new cores through the corrugated rubber boot with a nylon draw string",
+  "Fit the Deutsch DT connector at the hinge so the panel unplugs",
+  "Run the 15 A fused main feed, relay-switched, fused within 300 mm of the take-off",
+  "Fit a dedicated earth stud - cleaned, star-washered, repainted",
+  "Tap the five triggers: tail at the plate lamp, brake at a cluster, both indicators, reverse",
+  "Measure the real draw with a clamp meter and confirm the fuse rating",
+  "Label every conductor at both ends"
+ ],
+ p:{
+  brief:"Workshop-manual technical line drawing. Ghosted three-quarter view of a car's rear body seen from behind, structure transparent grey, the wiring harness drawn as bold coloured lines inside it.",
+  context:"Stage 06: the physical routing of the new wiring through the back of the car - where the harness runs, where it is fused, and where it crosses from the body into the opening tailgate.",
+  view:"Semi-transparent three-quarter view from behind the car, showing only the rear body and tailgate as a ghosted grey outline so the harness inside is visible.",
+  callouts:[
+   ["Supply","boot junction with an inline fuse","a battery or junction point in the boot with an inline fuse immediately beside it"],
+   ["Relay","relay in the harness","a relay block in the harness downstream of that fuse"],
+   ["Controller","controller box in the boot","the controller box mounted in the boot area, away from the tailgate"],
+   ["Hinge boot","corrugated rubber boot at the hinge, harness through it","the corrugated rubber boot at the top hinge, with the harness bundle passing through it from body to tailgate"],
+   ["Connector","multi-pin connector, drawn part separated","a multi-pin connector on the tailgate side of that crossing, drawn part-separated to show it unplugs"],
+   ["Light bar","light bar across the tailgate","the light bar itself spanning the tailgate, fed from that connector"],
+   ["Trigger branches","thin branches to both tail lamps and the plate lamp","thin branch wires running to the left and right tail lamp clusters and to the number plate lamp position"],
+   ["Earth","earth stud bolted to the body shell","a single earth point bolted to the body shell, with the earth wire running to it"]
+  ]}},
+
+{id:"s7", n:"07", t:"Lock delete", d:"Three ways in, one of them mechanical",
+ tasks:[
+  "Remove the trim board and disconnect the cylinder rod at both ends",
+  "Slide the retainer clip and push the barrel out forwards",
+  "Bag the barrel, rod and clip with their part numbers",
+  "Fit the boot popper solenoid on its own fused feed with a hidden cabin switch",
+  "Route the mechanical Bowden emergency cable to the folded-seat access point",
+  "Fifty open and close cycles, then prove it with the battery disconnected"
+ ],
+ p:{
+  brief:"Workshop-manual technical line drawing. Interior view of a car tailgate with the trim board removed, latch and release mechanisms exposed, plus one enlarged detail inset.",
+  context:"Stage 07: deleting the external key barrel from the tailgate and replacing it with electric release plus a mechanical emergency cable. The drawing must separate what is removed from what is added.",
+  view:"Interior view of the tailgate with its trim board removed, seen from inside the car. A small enlarged detail inset sits in one corner.",
+  callouts:[
+   ["Latch","latch at the bottom edge, stays","the latch assembly at the bottom centre edge of the tailgate, which stays in place"],
+   ["Lock cylinder","key barrel, faded and struck through","the original key barrel in the upper garnish area, drawn faded and struck through with a single thin diagonal line to show it is removed"],
+   ["Operating rod","its operating rod, faded and struck through","the rod running from that barrel down to the latch, also drawn faded and struck through"],
+   ["Retainer clip","retainer clip, enlarged in the inset","the horseshoe retainer clip that holds the barrel in place, shown enlarged in the detail inset"],
+   ["Actuator","electric lock actuator on the latch","the electric lock actuator mounted on the latch"],
+   ["Boot popper","solenoid boot popper with push rod","a solenoid boot popper mounted near the latch with a short push rod bearing on the tailgate frame"],
+   ["Emergency cable","Bowden cable from the latch running forward","a mechanical Bowden cable from the latch's manual release lever, running forward into the boot area"],
+   ["Pull handle","pull handle beside a folded rear seat in outline","the pull handle at the end of that cable, with a folded rear seat drawn in outline beside it showing the access route"]
+  ]}},
+
+{id:"s8", n:"08", t:"Plate lighting", d:"The one deleted function that's a Major if you improvise it",
+ tasks:[
+  "Confirm where the original plate lamps live before you cut anything",
+  "Choose the location: new lower garnish, bumper, or plate surround",
+  "Fit E-marked lamps wired back to the original tail-lamp feed",
+  "Check at 10 m at night that no direct white light shows to the rear",
+  "Confirm the plate is readable at 20 m at night"
+ ],
+ p:{
+  brief:"Workshop-manual technical line drawing. Rear elevation of the lower half of a car tailgate and bumper, with light cones drawn as pale translucent wedges.",
+  context:"Stage 08: relighting the number plate after the original lamps are destroyed by the channel. The drawing is about light angles - the plate must be lit, and no white light may be visible looking straight at the car from behind.",
+  view:"Rear elevation of the lower half of the tailgate and bumper, square to the viewer, light cones as pale translucent wedges.",
+  callouts:[
+   ["Number plate","blank number plate in its recess","a blank rectangular number plate, wide and shallow, in its recess with no characters on it"],
+   ["Upper lamps","two slim lamps above, cones angled down onto the plate","two slim lamp units mounted above the plate in a horizontal garnish strip, each throwing a downward-angled cone of white light across the plate face"],
+   ["Lower lamps","alternative bumper lamps, cones angled up, faded","an alternative pair of lamp units set into the bumper below the plate with upward-angled cones, drawn faded to mark them as the alternative"],
+   ["Sight line","horizontal sight line straight back at eye height","a horizontal line extending straight rearward from the plate at eye height, drawn as a long thin line to the edge of the frame"],
+   ["No white","crossed circle on that sight line","a crossed circle symbol sitting on that sight line, meaning no direct white light may escape along it"],
+   ["Bar channel","light bar channel above, ghosted","the light bar channel above, drawn ghosted, to place the plate lighting relative to it"]
+  ]}},
+
+{id:"s9", n:"09", t:"Fit, measure and sign off", d:"Numbers, water and one unplugged connector",
+ tasks:[
+  "Swap the panels and align the shut lines; latch closes on the first pull",
+  "Measure amber intensity through the finished face - target 150-250 cd",
+  "Measure reverse intensity through the finished face - at least 80 cd",
+  "Check brake is 5-10x position, and position is no brighter than the OEM tail lamps",
+  "Time the flash rate: 60-120 per minute, both sides and on hazards",
+  "Confirm the bar's amber stays in phase with the OEM cluster indicators",
+  "Confirm the sweep runs inboard to outboard and all zones extinguish together",
+  "Unplug the controller: car still indicates, brakes and shows position lamps",
+  "Confirm no more than two reversing lamps are lit on the car",
+  "Stand 10 m back at night - no white source visible except reverse",
+  "Hose test at 45 degrees for ten minutes, all angles; tray and lamp dry inside",
+  "Pour 250 ml into the tray with the tailgate shut - it all drains",
+  "One-hour thermal soak: under 60 C at the emitters, no lens distortion",
+  "Leave it outside overnight after the water test - no fog inside the lens",
+  "Emergency release works with the battery disconnected and the seats folded",
+  "Declare the modification to your insurer in writing and file the confirmation"
+ ],
+ p:{
+  brief:"Workshop-manual technical line drawing. Plan view from directly above of the rear of a car with its light bar lit, and the light-measurement setup laid out on the ground behind it, with one unnumbered dimension line.",
+  context:"Stage 09: testing the finished lamp. The drawing sets out the measurement geometry used to check light intensity, plus the water spray test and the thermal soak.",
+  view:"Plan view from directly above, the rear of the car at the top of the frame and the test setup laid out behind it. An unnumbered dimension line with arrowheads runs along the measurement axis.",
+  callouts:[
+   ["Car","rear of the car from above, light bar lit","the rear two thirds of the car seen from above, with the illuminated light bar visible across the tailgate"],
+   ["Measurement axis","measurement axis running back along the centreline","a straight line running rearward from the centre of the light bar along the car's centreline"],
+   ["Light meter","light meter on the axis facing the car","a small handheld light meter positioned on that axis facing the car"],
+   ["Spread","arc showing horizontal light spread","a shallow arc drawn across the axis showing the horizontal spread of light from the bar"],
+   ["Observer","eye symbol further back on the axis","an eye symbol further back along the axis marking the night-time observation position"],
+   ["Hose test","hose nozzle at 45 degrees to one side","a hose nozzle drawn to one side, angled at 45 degrees toward the panel with a fan of spray"],
+   ["Thermal","thermometer against the light bar","a thermometer symbol placed against the light bar"]
+  ]}}
+];
+
+var MEAS = [
+ ["M1","Tail lamp inner edge to inner edge","Maximum possible bar length"],
+ ["M2","Tail lamp red band height above ground","Sets the bar centreline"],
+ ["M3","Proposed bar centreline height","Keep inside 350–1500 mm"],
+ ["M4","Plate recess width × height","Clearance below the channel"],
+ ["M5","Garnish footprint L × H × depth","Volume you inherit"],
+ ["M6","Skin to inner panel gap at the channel","THE number — decides tunnel depth"],
+ ["M7","Skin to rear glass bonded flange","Upper limit of the channel"],
+ ["M8","Channel to latch and striker","Structural margin, aim ≥40 mm"],
+ ["M9","Channel to wiper motor and washer line","Collision check"],
+ ["M10","Loom grommet ID and free space","Will 12 new cores fit"],
+ ["M11","Tailgate skin thickness","Welding settings; expect 0.7–0.8 mm"],
+ ["M12","Crown radius across the channel","Flat chord vs segmented flats"],
+ ["M13","Reverse lamp emitting surface height","Fog lamp separation check"],
+ ["M14","Bumper top edge to plate bottom","Space for bumper plate lamps"],
+ ["M15","Tailgate face angle from vertical","Visibility angles, water pooling"],
+ ["M16","Tailgate weight, before / after","Gas strut capacity"],
+ ["M17","Depth behind the plate recess","Room for actuator and cable runs"],
+ ["M18","Body width at the lamps","Only if an obligatory lamp moves"],
+ ["P1","OEM tail lamp, lux","Calibration for position mode"],
+ ["P2","OEM stop lamp, lux","Calibration for brake mode"],
+ ["P3","OEM indicator, lux","Calibration for the amber array"],
+ ["P4","Measurement distance used, m","For cd = lux × distance²"]
+];
+
+var KEY="celica-tracker-v1";
+var state={t:{},n:{},m:{}}, dbRef=null, timer=null, resetArmed=false, resetTimer=null;
+var TOTAL=STAGES.reduce(function(a,s){return a+s.tasks.length;},0);
+
+function el(tag,cls,txt){var e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e;}
+function toast(msg){var t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(function(){t.classList.remove("show");},1900);}
+function status(txt,on){document.getElementById("savetext").textContent=txt; document.getElementById("savepip").classList.toggle("on",!!on);}
+
+/* ---- build the DOM ---- */
+var host=document.getElementById("stages");
+STAGES.forEach(function(s){
+  var d=el("details","stage"); d.id="stage-"+s.id;
+  var sum=el("summary");
+  sum.appendChild(el("span","sn",s.n));
+  var st=el("div","st"); var b=el("b",null,s.t); var sp=el("span",null,s.d);
+  st.appendChild(b); st.appendChild(sp); sum.appendChild(st);
+  var bar=el("div","bar"); var fill=el("i"); fill.dataset.fill=s.id; bar.appendChild(fill); sum.appendChild(bar);
+  var cnt=el("span","cnt"); cnt.dataset.cnt=s.id; sum.appendChild(cnt);
+  var chev=el("span","chev","›"); sum.appendChild(chev);
+  d.appendChild(sum);
+
+  var body=el("div","body");
+  var ul=el("ul","tasks");
+  s.tasks.forEach(function(task,i){
+    var li=el("li"); var lab=el("label","task");
+    var inp=document.createElement("input"); inp.type="checkbox"; inp.dataset.task=s.id+":"+i;
+    lab.appendChild(inp); lab.appendChild(el("span",null,task)); li.appendChild(lab); ul.appendChild(li);
+  });
+  body.appendChild(ul);
+
+  body.appendChild(el("span","lbl","Notes — what the car actually turned out to be"));
+  var ta=document.createElement("textarea"); ta.dataset.note=s.id;
+  ta.placeholder="Measurements taken, part numbers, what went wrong, what to buy next…";
+  body.appendChild(ta);
+
+  var sch=el("details","sch");
+  var ssum=el("summary"); ssum.appendChild(el("span",null,"\u25B8 Schematic prompt & legend")); sch.appendChild(ssum);
+  var sb=el("div","schbody");
+  sb.appendChild(el("p","hint","Paste into an image model, generate two or three, keep the clearest and read it against the legend below. Short by default \u2014 tick Long version only if your model handles it."));
+  var pre=el("pre","prompt",buildPrompt(s,false,false)); sb.appendChild(pre);
+
+  var row=el("div","schrow");
+  var cp=el("button","btn","Copy prompt"); cp.type="button";
+  row.appendChild(cp);
+  var wc=el("span","wc"); row.appendChild(wc);
+  sb.appendChild(row);
+
+  var ob=document.createElement("input"); ob.type="checkbox";
+  var db=document.createElement("input"); db.type="checkbox";
+  function redraw(){ pre.textContent=buildPrompt(s,ob.checked,db.checked); wc.textContent=pre.textContent.trim().split(/\s+/).length+" words"; }
+
+  var opt1=el("label","opt");
+  var o1=el("span"); o1.appendChild(el("b",null,"Ask for word labels instead of numerals"));
+  o1.appendChild(document.createTextNode("Only if your model renders short text reliably. Adds a few lines."));
+  opt1.appendChild(ob); opt1.appendChild(o1); sb.appendChild(opt1);
+
+  var opt2=el("label","opt");
+  var o2=el("span"); o2.appendChild(el("b",null,"Long version"));
+  o2.appendChild(document.createTextNode("Roughly three times the length, with fuller descriptions and explicit rules. Better on models that take their time; the short version is the one to use if yours is timing out."));
+  opt2.appendChild(db); opt2.appendChild(o2); sb.appendChild(opt2);
+
+  ob.addEventListener("change",redraw);
+  db.addEventListener("change",redraw);
+  redraw();
+  cp.addEventListener("click",function(){ copyText(buildPrompt(s,ob.checked,db.checked),cp); });
+
+  var lrowhead=el("div","lblrow");
+  lrowhead.appendChild(el("span","lbl","Legend \u2014 what each numeral means"));
+  var cl=el("button","minibtn","copy for caption"); cl.type="button";
+  lrowhead.appendChild(cl);
+  sb.appendChild(lrowhead);
+  var leg=el("div","legend");
+  s.p.callouts.forEach(function(c,i){
+    var r=el("div","lrow");
+    r.appendChild(el("span","lnum",String(i+1)));
+    var tx=el("div"); tx.appendChild(el("b",null,c[0])); tx.appendChild(el("em",null,c[1]));
+    r.appendChild(tx); leg.appendChild(r);
+  });
+  sb.appendChild(leg);
+  cl.addEventListener("click",function(){
+    copyText(s.n+" "+s.t+" \u2014 callout legend\n"+s.p.callouts.map(function(c,i){return (i+1)+" "+c[0]+" \u2014 "+c[1];}).join("\n"),cl);
+  });
+
+  sch.appendChild(sb);
+  body.appendChild(sch);
+
+  d.appendChild(body);
+  host.appendChild(d);
+});
+
+var msheet=document.getElementById("msheet");
+MEAS.forEach(function(m){
+  var r=el("div","mrow");
+  r.appendChild(el("code",null,m[0]));
+  var p=el("p",null,m[1]); p.appendChild(el("em",null,m[2])); r.appendChild(p);
+  var i=document.createElement("input"); i.type="text"; i.dataset.meas=m[0];
+  i.setAttribute("aria-label",m[0]+" — "+m[1]); i.placeholder="—";
+  r.appendChild(i); msheet.appendChild(r);
+});
+
+/* ---- state ---- */
+function apply(){
+  document.querySelectorAll("input[data-task]").forEach(function(e){
+    var v=!!state.t[e.dataset.task]; if(e.checked!==v) e.checked=v;
+  });
+  document.querySelectorAll("textarea[data-note]").forEach(function(e){
+    var v=state.n[e.dataset.note]||""; if(e.value!==v){e.value=v; grow(e);}
+  });
+  document.querySelectorAll("input[data-meas]").forEach(function(e){
+    var v=state.m[e.dataset.meas]||""; if(e.value!==v) e.value=v;
+  });
+  refresh();
+}
+function refresh(){
+  var done=0;
+  STAGES.forEach(function(s){
+    var c=0;
+    for(var i=0;i<s.tasks.length;i++){ if(state.t[s.id+":"+i]) c++; }
+    done+=c;
+    var pct=s.tasks.length? c/s.tasks.length : 0;
+    var fill=document.querySelector('[data-fill="'+s.id+'"]');
+    if(fill) fill.style.width=(pct*100).toFixed(0)+"%";
+    var cnt=document.querySelector('[data-cnt="'+s.id+'"]');
+    if(cnt) cnt.textContent=c+"/"+s.tasks.length;
+    var card=document.getElementById("stage-"+s.id);
+    if(card){ card.classList.toggle("done",c===s.tasks.length && c>0); card.classList.toggle("part",c>0&&c<s.tasks.length); }
+  });
+  var pct=TOTAL? done/TOTAL : 0;
+  var C=2*Math.PI*19;
+  var fg=document.getElementById("ringfg");
+  fg.setAttribute("stroke-dasharray",C.toFixed(1));
+  fg.setAttribute("stroke-dashoffset",(C*(1-pct)).toFixed(1));
+  fg.setAttribute("stroke",pct===1?"var(--green)":"var(--accent)");
+  document.getElementById("ringpct").textContent=Math.round(pct*100)+"%";
+  document.getElementById("hcount").textContent=done+" of "+TOTAL+" steps complete";
+}
+function grow(t){ t.style.height="auto"; t.style.height=Math.max(74,t.scrollHeight+2)+"px"; }
+
+function readLocal(){
+  try{ var raw=localStorage.getItem(KEY);
+    if(raw){ var p=JSON.parse(raw); state.t=p.t||{}; state.n=p.n||{}; state.m=p.m||{}; } }catch(e){}
+}
+function writeLocal(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+function save(){
+  writeLocal();
+  if(!dbRef){ status("Saved in this browser",true); return; }
+  clearTimeout(timer);
+  timer=setTimeout(function(){
+    dbRef.set({t:state.t,n:state.n,m:state.m,updatedAt:new Date().toISOString()})
+      .then(function(){ status("Synced "+new Date().toLocaleTimeString(),true); })
+      .catch(function(){ status("Saved in this browser only",false); });
+  },700);
+}
+
+document.addEventListener("change",function(e){
+  var el2=e.target;
+  if(el2.dataset && el2.dataset.task){ state.t[el2.dataset.task]=el2.checked; refresh(); save(); }
+});
+document.addEventListener("input",function(e){
+  var el2=e.target;
+  if(el2.dataset && el2.dataset.note){ state.n[el2.dataset.note]=el2.value; grow(el2); save(); }
+  else if(el2.dataset && el2.dataset.meas){ state.m[el2.dataset.meas]=el2.value; save(); }
+});
+
+/* ---- copy / export / import / reset ---- */
+function copyText(txt,btn){
+  var done=function(){ var o=btn.textContent; btn.textContent="Copied"; setTimeout(function(){btn.textContent=o;},1400); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done,function(){ fallback(txt,done); });
+  } else fallback(txt,done);
+}
+function fallback(txt,done){
+  var ta=document.createElement("textarea"); ta.value=txt;
+  ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand("copy"); done(); }catch(e){ toast("Select the prompt and copy manually"); }
+  document.body.removeChild(ta);
+}
+document.getElementById("btn-export").addEventListener("click",function(){
+  var data=JSON.stringify({app:"celica-build-tracker",v:1,saved:new Date().toISOString(),t:state.t,n:state.n,m:state.m},null,2);
+  var name="celica-build-tracker-"+new Date().toISOString().slice(0,10)+".json";
+  if(window.claude && typeof window.claude.use==="function"){
+    window.claude.use("downloads").then(function(dl){
+      if(dl && dl.save){ dl.save({filename:name,data:data}).then(function(){toast("Backup saved");},function(){blobSave(name,data);}); }
+      else blobSave(name,data);
+    }).catch(function(){ blobSave(name,data); });
+  } else blobSave(name,data);
+});
+function blobSave(name,data){
+  try{
+    var b=new Blob([data],{type:"application/json"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+    toast("Backup downloaded");
+  }catch(e){
+    fallback(data,function(){}); toast("Backup copied to clipboard");
+  }
+}
+document.getElementById("btn-import").addEventListener("click",function(){ document.getElementById("filein").click(); });
+document.getElementById("filein").addEventListener("change",function(e){
+  var f=e.target.files && e.target.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var p=JSON.parse(r.result);
+      state.t=p.t||{}; state.n=p.n||{}; state.m=p.m||{};
+      apply(); save(); toast("Progress restored");
+    }catch(err){ toast("That file isn't a tracker backup"); }
+  };
+  r.readAsText(f); e.target.value="";
+});
+document.getElementById("btn-reset").addEventListener("click",function(){
+  var b=this;
+  if(!resetArmed){
+    resetArmed=true; b.textContent="Confirm?";
+    resetTimer=setTimeout(function(){ resetArmed=false; b.textContent="Reset"; },4000);
+    return;
+  }
+  clearTimeout(resetTimer); resetArmed=false; b.textContent="Reset";
+  state={t:{},n:{},m:{}}; apply(); save(); toast("Tracker cleared");
+});
+
+/* ---- boot ---- */
+readLocal(); apply();
+status("Saved in this browser",true);
+
+if(window.claude && typeof window.claude.use==="function"){
+  window.claude.use("db").then(function(db){
+    if(!db) return;
+    dbRef=db.doc("build/tracker");
+    dbRef.onSnapshot(function(snap){
+      if(!snap.exists){ status("Synced — saves across your devices",true); return; }
+      var d=snap.data()||{};
+      var active=document.activeElement;
+      var lock=active && active.dataset && (active.dataset.note||active.dataset.meas);
+      if(!lock){ state.t=d.t||state.t; state.n=d.n||state.n; state.m=d.m||state.m; apply(); writeLocal(); }
+      status("Synced — saves across your devices",true);
+    },function(){ status("Saved in this browser only",false); });
+  }).catch(function(){});
+}
+})();
+</script>
+
+</body>
+</html>

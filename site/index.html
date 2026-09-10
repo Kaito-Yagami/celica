@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Service reference, mod record and electrical planner for a 2003 Toyota Celica T-Sport, ZZT231.">
+<title>Celica T-Sport — ZZT231</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<div id="ign" aria-hidden="true">
+  <svg class="dial" viewBox="0 0 200 120" style="--len:283">
+    <path class="trk" d="M20 100 A80 80 0 0 1 180 100"/>
+    <path class="arc" d="M20 100 A80 80 0 0 1 180 100"/>
+    <text class="cap" x="100" y="88" text-anchor="middle">ZZT231</text>
+  </svg>
+</div>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <i class="mk"></i>
+      <b>CELICA</b><span>ZZT231</span>
+    </a>
+    <button class="burger" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav class="main">
+      <a href="index.html">Car</a>
+      <a href="issues.html">Issues</a>
+      <a href="mods.html">Mods</a>
+      <a href="electrical.html">Electrical</a>
+      <a href="manual.html">Manual</a>
+      <a href="specs.html">Specs</a>
+      <a href="garage.html">Garage</a>
+      <a href="projects.html">Projects</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="page-in">
+
+  <!-- hero ------------------------------------------------------------- -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="hero-txt">
+          <p class="eyebrow">2003 · 2ZZ-GE · C60 six-speed · RHD</p>
+          <h1>Celica<br>T-Sport</h1>
+          <p class="lede">
+            The factory manual, the fusebox as it actually is, and a record of everything
+            that has been changed — in one place that works offline, in a garage, at night.
+          </p>
+          <div class="chips" style="margin:20px 0 24px">
+            <span class="chip"><b>FM03 AZN</b></span>
+            <span class="chip">202 Black</span>
+            <span class="chip">ZZT231</span>
+            <span class="chip src">10 mods logged</span>
+          </div>
+          <div class="row">
+            <a class="btn primary" href="electrical.html">Fusebox &amp; load budget</a>
+            <a class="btn" href="manual.html">Search the manual</a>
+          </div>
+        </div>
+
+        <figure class="hero-art" data-reveal>
+          <img src="assets/img/hero-line.png"
+               alt="Line drawing of the car, from the service manual">
+          <div class="scan"></div>
+          <figcaption class="chip src">RM744U2 &middot; BE-30 &middot; p.1671</figcaption>
+        </figure>
+      </div>
+
+      <div class="stats" id="stats"></div>
+    </div>
+  </section>
+
+  <!-- entry points ----------------------------------------------------- -->
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">Where to go</p>
+      <h2 style="margin-bottom:8px">Seven ways in</h2>
+      <p class="lede" style="margin-bottom:26px">
+        Everything here is driven by two sources: the bundled Toyota manual, and this
+        specific car. They are never mixed up — each figure says where it came from.
+      </p>
+
+      <div class="grid g3">
+        <a class="card lit tile" href="issues.html" data-reveal>
+          <span class="k">01 — Issues</span>
+          <div><h3>What is wrong with it</h3>
+          <p>Open faults mapped on the car, each with what to check in what order and
+             the manual pages for the job.</p></div>
+          <span class="go">Open →</span>
+        </a>
+        <a class="card lit tile" href="electrical.html" data-reveal>
+          <span class="k">02 — Electrical</span>
+          <div><h3>Fusebox &amp; load budget</h3>
+          <p>All 35 slots from this car's own label, the four taps already in it, and a
+             calculator that tells you what is actually left on a circuit.</p></div>
+          <span class="go">Open →</span>
+        </a>
+        <a class="card lit tile" href="manual.html" data-reveal>
+          <span class="k">03 — Manual</span>
+          <div><h3>Browse &amp; search</h3>
+          <p id="figCount">Curated figures from the service manual, plus full-text search
+             across all 1,972 pages.</p></div>
+          <span class="go">Open →</span>
+        </a>
+        <a class="card lit tile" href="specs.html" data-reveal>
+          <span class="k">04 — Specs</span>
+          <div><h3>Torque, fluids, wheels</h3>
+          <p>The numbers you actually stop and look up, with a rolling-radius calculator
+             for what the 19s do to the speedo.</p></div>
+          <span class="go">Open →</span>
+        </a>
+        <a class="card lit tile" href="mods.html" data-reveal>
+          <span class="k">05 — Mods</span>
+          <div><h3>What has been done</h3>
+          <p>Ten mods, each with what it touched, what it draws, and the manual pages for
+             the job — including the ones that sit on an airbag.</p></div>
+          <span class="go">Open →</span>
+        </a>
+        <a class="card lit tile" href="garage.html" data-reveal>
+          <span class="k">06 — Garage</span>
+          <div><h3>Service log &amp; checks</h3>
+          <p>The manual's inspection list, a running service log, and a pre-MOT check
+             built from the manual's own service limits.</p></div>
+          <span class="go">Open →</span>
+        </a>
+        <a class="card lit tile" href="projects.html" data-reveal>
+          <span class="k">07 — Projects</span>
+          <div><h3>Work on the list</h3>
+          <p>Bigger jobs, each with its own plan, checklists and open questions — the
+             tail bar, and whatever comes after it.</p></div>
+          <span class="go">Open →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3D model --------------------------------------------------------- -->
+  <section class="sec tight" id="shape">
+    <div class="wrap">
+      <div class="spread" style="margin-bottom:16px">
+        <div>
+          <p class="eyebrow">The shape</p>
+          <h2>ZZT231, as a drawing you can turn</h2>
+        </div>
+        <div class="row" id="modelViews"></div>
+      </div>
+      <p class="lede" style="margin-bottom:20px">
+        A printable model of the car reduced to its feature lines — the same creases
+        and silhouettes the manual draws by hand. Drag it. Hidden-line removal is on,
+        so it reads as a drawing rather than a wire cage.
+      </p>
+
+      <div class="model-wrap card">
+        <div id="model3d" class="model-3d"></div>
+        <div class="model-fb">
+          <p class="empty">This needs WebGL, which this browser has not given the page.
+          The manual's own drawings are all still there in
+          <a href="manual.html">the manual browser</a>.</p>
+        </div>
+        <div class="model-ui">
+          <span class="chip mono" id="modelStat">—</span>
+          <div class="row" style="gap:6px">
+            <button class="btn ghost sm" id="modelHidden" aria-pressed="true">Hidden lines</button>
+            <button class="btn ghost sm" id="modelSpin" aria-pressed="true">Auto-turn</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- provenance ------------------------------------------------------- -->
+  <section class="sec tight">
+    <div class="wrap">
+      <div class="grid g2" style="gap:18px;align-items:start">
+        <div data-reveal>
+          <p class="eyebrow">Read this once</p>
+          <h2 style="margin-bottom:14px">What the manual is, and is not</h2>
+          <div class="note red">
+            <div class="hd">The manual is a 2000 US book</div>
+            <p>It is Toyota RM744U1/U2 for the 2000 Celica, ZZT230/231. The engine, gearbox,
+            brakes, steering and suspension all carry straight over to a 2003 UK T-Sport.
+            <b>The body electrical does not.</b> Its instrument panel fusebox has 23 fuses;
+            this car has 35. Where the two disagree, this site follows the car.</p>
+          </div>
+          <div class="note amber">
+            <div class="hd">There are no wiring diagrams</div>
+            <p>Circuit diagrams were published separately as the EWD, <span class="mono">EW0399U</span>,
+            and are not in this manual. What you get here is component locations, removal
+            sequences and specifications — not circuits. Nothing on this site pretends otherwise.</p>
+          </div>
+          <div class="note cool">
+            <div class="hd">Page text is unreliable, figures are not</div>
+            <p>Search runs on the PDF's own text layer, whose character map is damaged —
+            words come out mangled. It is good enough to <em>find</em> a page and useless for
+            reading one. Every number published on this site was read off the rendered figure
+            by eye, and every figure carries its page reference so you can check it.</p>
+          </div>
+        </div>
+
+        <div data-reveal>
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="padding:16px 18px;border-bottom:1px solid var(--ink-3)">
+              <span class="lbl">Source</span>
+              <h3 style="margin:0">Toyota RM744U1 / RM744U2</h3>
+              <p class="muted" style="margin:6px 0 0;font-size:13.5px">
+                Repair manual volumes 1 and 2, first printing July 1999.
+              </p>
+            </div>
+            <div class="tbl-wrap" style="border:0;border-radius:0">
+              <table>
+                <tbody id="srcTbl"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div>
+      <p><b style="color:var(--tx)">Celica T-Sport · ZZT231</b></p>
+      <p>Built from Toyota RM744U1/U2. Figures reproduced for personal reference.</p>
+    </div>
+    <div>
+      <p>Runs entirely offline. No server, no network, nothing leaves this machine.</p>
+      <p><a href="manual.html">Manual</a> · <a href="electrical.html">Electrical</a> · <a href="specs.html">Specs</a></p>
+    </div>
+  </div>
+</footer>
+
+<script src="data/manual.js"></script>
+<script src="data/mods.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/home.js"></script>
+<script src="assets/js/vendor/three.min.js" defer></script>
+<script src="data/model.js" defer></script>
+<script src="assets/js/model3d.js" defer></script>
+</body>
+</html>

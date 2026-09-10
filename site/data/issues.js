@@ -1,0 +1,388 @@
+/* ==========================================================================
+   Faults and jobs outstanding on the car.
+
+   Each issue carries a hotspot in the 3D model's own coordinate space, so the
+   dashboard can point at roughly where on the car it is. X runs from about
+   -33 at the tail to +33 at the nose, Y from 0 at the ground to ~20 at the
+   roof, Z from -15 to +15 across the car. Right-hand drive, so the driver's
+   side is +Z here and the passenger side is -Z.
+
+   severity: 'urgent' | 'attention' | 'watch'
+   status:   'open' | 'diagnosing' | 'scheduled' | 'fixed'
+
+   `figs` are 0-indexed PDF pages. Everything the manual is quoted on was read
+   off the rendered figure; anything that is general knowledge rather than
+   sourced says so in the text.
+   ========================================================================== */
+window.CELICA = window.CELICA || {};
+
+window.CELICA.issues = [
+
+  /* ------------------------------------------------------------ air con */
+  {
+    id: 'ac-dead',
+    title: 'Air conditioning does not cool',
+    area: 'Climate',
+    severity: 'attention',
+    status: 'open',
+    since: 'Ongoing',
+    blurb: 'No cold air. Could be a system that has quietly lost its charge, ' +
+           'or a compressor that is never being asked to run.',
+    hot: { x: 26, y: 5, z: 0, label: 'A/C' },
+    symptom: `
+<p>Air comes out, but it is not cold. On a car this age that is one of two stories, and they
+are told apart in about thirty seconds without any tools.</p>
+<div class="note cool">
+  <div class="hd">The thirty-second test</div>
+  <p>Engine running, A/C on, fan on full. Look at the compressor pulley at the front of the
+  engine. <b>Does the centre of the pulley — the clutch plate — snap in and start turning
+  with the belt?</b></p>
+  <ul style="margin-bottom:0">
+    <li><b>It does not engage.</b> The system is not being allowed to run. Almost always low
+    refrigerant: the pressure switch inhibits the clutch to protect the compressor from
+    running dry. Could also be the fuse, relay or amplifier.</li>
+    <li><b>It engages but the air stays warm.</b> The system runs but is not moving heat —
+    charge, condenser, expansion valve or evaporator.</li>
+  </ul>
+</div>`,
+    cause: `
+<p>The manual's own symptom table puts <b>refrigerant volume first</b> for all three cooling
+faults — no compressor operation, no cool air, and insufficient cooling. That ordering is
+not an accident. R134a systems lose a little charge every year through the hose walls and
+shaft seal, and after twenty years a system that has never been touched is usually simply
+empty.</p>
+<p>The second most likely thing, given the whirr from the glovebox, is that both faults share
+a cause: a blocked evaporator housing restricts airflow and can mask a system that is
+actually working. Diagnose the blower first — it is free.</p>`,
+    check: [
+      { t: 'Does the compressor clutch engage?', hint: 'Watch the pulley centre with A/C on and the fan at full.' },
+      { t: 'Check the drive belt condition and tension', hint: 'AC-16. A slipping belt looks exactly like a dead compressor.' },
+      { t: 'Check the A/C fuse and the magnetic clutch relay', hint: 'Relay is in the engine bay box, not the instrument panel J/B.' },
+      { t: 'Gauge the system for pressure', hint: 'AC-10. Needs a manifold gauge set — this is where DIY usually stops.' },
+      { t: 'Inspect the condenser for blockage and damage', hint: 'It sits in front of the radiator and collects road debris.' },
+      { t: 'Check the pressure switch', hint: 'AC-51. This is what inhibits the clutch when the charge is low.' }
+    ],
+    fix: `
+<p>If it is charge — and it usually is — the honest answer is that a re-gas alone is a
+temporary fix. The gas left through a leak, and it will leave again. A shop should evacuate
+the system, hold a vacuum to prove it is sealed, then charge by weight. The compressor
+condenser and evaporator oil charges are in the manual if anything gets replaced.</p>
+<div class="note amber">
+  <div class="hd">Where to stop</div>
+  <p>Opening a refrigerant circuit without recovery equipment vents R134a to atmosphere,
+  which is both illegal and pointless. Diagnose as far as the clutch test and the visual
+  checks, then hand it to someone with gauges and a recovery machine.</p>
+</div>
+<p>Compressor oil quantities when parts are replaced: 40 cc for a condenser, 40 cc for an
+evaporator, 120 cc for a compressor. ND-OIL 8 or equivalent.</p>`,
+    figs: [
+      { p: 1905, c: 'A/C troubleshooting — the symptom table this page follows' },
+      { p: 1892, c: 'Air conditioning system — layout and refrigerant flow' },
+      { p: 1910, c: 'Manifold gauge set — how the system is measured' },
+      { p: 1926, c: 'Compressor and magnetic clutch' },
+      { p: 1942, c: 'Pressure switch' },
+      { p: 1934, c: 'Condenser' },
+      { p: 1147, c: 'Compressor oil quantities per replaced part' }
+    ],
+    related: ['blower-whirr']
+  },
+
+  /* ---------------------------------------------------------- blower noise */
+  {
+    id: 'blower-whirr',
+    title: 'Whirring from behind the glovebox',
+    area: 'Climate',
+    severity: 'attention',
+    status: 'open',
+    since: 'Ongoing',
+    blurb: 'That is where the blower motor lives. Almost always debris in the fan ' +
+           'cage or a dry bearing — and both are reachable in under an hour.',
+    hot: { x: 9, y: 9, z: -10, label: 'Blower' },
+    symptom: `
+<p>A whirr, hum or rattle from the passenger footwell area. The single most useful
+observation costs nothing:</p>
+<div class="note cool">
+  <div class="hd">Does the noise change with fan speed?</div>
+  <ul style="margin-bottom:0">
+    <li><b>Yes — rises and falls with the fan.</b> It is the blower motor or something loose
+    inside its housing. That is this issue.</li>
+    <li><b>No — constant regardless of the fan, or only with A/C on.</b> Look elsewhere: a
+    belt, an idler, or the compressor itself.</li>
+  </ul>
+</div>
+<p>A rhythmic tick or flutter usually means a leaf or a bit of trim caught in the squirrel
+cage. A dry, even whirr that gets worse with speed usually means the motor bearing.</p>`,
+    cause: `
+<p>The blower sits directly behind the glovebox and draws cabin air through the air refiner
+filter — which is right there too, and which on a twenty-year-old car is very often clogged
+or missing entirely. When that filter is gone, everything the intake picks up goes straight
+into the fan.</p>
+<p>The manual's job order tells you how accessible it is: <b>remove the glove compartment
+parts, disconnect the connector, three screws, and the motor is out.</b> Then it can be
+tested on the bench with nothing more than a battery and two leads.</p>`,
+    check: [
+      { t: 'Confirm the noise tracks fan speed', hint: 'Cycle through all speeds with the engine off.' },
+      { t: 'Pull the air refiner filter and look at it', hint: 'Two pins in the glovebox, pull it down, the filter case slides out.' },
+      { t: 'Look into the blower housing for debris', hint: 'Leaves and grit collect in the fan cage.' },
+      { t: 'Spin the blower wheel by hand', hint: 'Roughness or side-play means a worn bearing.' },
+      { t: 'Bench-test the motor on 12 V', hint: 'AC-48: positive to terminal 1, negative to terminal 2, check it runs smoothly.' },
+      { t: 'Check the blower resistor while you are in there', hint: 'AC-49: continuity across terminals 1-2-3-4.' }
+    ],
+    fix: `
+<p>Work through it in the order the access gives you, because each step is free once the
+glovebox is down:</p>
+<ol>
+<li><b>Air refiner filter.</b> Two pins, glovebox drops, case pulls out. If it is dirty or
+absent, replace it — that alone fixes a surprising number of blower noises and improves
+airflow, which matters for the A/C fault too.</li>
+<li><b>Clear the housing.</b> Anything loose in the cage comes out with a vacuum and a
+careful hand.</li>
+<li><b>Test the motor.</b> If it is rough on 12 V off the car, replace it. Blower motors are
+not usually worth rebuilding.</li>
+</ol>
+<p>Do this before spending anything on the air conditioning. It is the cheapest job on the
+list and it may change what the A/C fault looks like.</p>`,
+    figs: [
+      { p: 1964, c: 'Air refiner filter — replacement, and how the glovebox drops' },
+      { p: 1939, c: 'Blower motor — removal and the 12 V bench test' },
+      { p: 1940, c: 'Blower resistor — continuity check' },
+      { p: 1921, c: 'Blower unit — full assembly' },
+      { p: 1905, c: 'A/C troubleshooting — "no blower operation" row' }
+    ],
+    related: ['ac-dead']
+  },
+
+  /* --------------------------------------------------------- door corrosion */
+  {
+    id: 'rust-door',
+    title: 'Corrosion — bottom of the door',
+    area: 'Body',
+    severity: 'attention',
+    status: 'open',
+    since: 'Noticed',
+    blurb: 'A little rust along the bottom edge. On a door that is almost always ' +
+           'blocked drain holes, which means it is rotting from the inside out.',
+    hot: { x: -1, y: 3, z: 14, label: 'Door' },
+    symptom: `
+<p>Bubbling or brown staining along the lower edge of the door skin, usually worst at the
+corners.</p>
+<div class="note red">
+  <div class="hd">What you can see is not the extent of it</div>
+  <p>A door rusts from the <em>inside</em>. Rain runs down the glass, past the weather strip,
+  into the cavity, and out through drain holes in the bottom edge. When those holes block
+  with road grime the water stops leaving, and the skin corrodes outward from behind the
+  paint. By the time it shows on the outside, the inside is worse.</p>
+</div>`,
+    cause: `
+<p>Blocked drains, nearly always. Twenty years of grit, and on a lowered car the door
+bottoms sit closer to the spray.</p>
+<p>Worth checking as part of the same job: whether the weather strip at the base of the glass
+is still sealing, and whether the vapour barrier behind the door trim card is intact. A torn
+barrier lets water into the cabin side as well.</p>`,
+    check: [
+      { t: 'Find the drain holes along the bottom edge of the door', hint: 'Poke them clear with a cable tie, not a screwdriver — do not scratch the paint.' },
+      { t: 'Pour a little water down inside the glass and watch it drain', hint: 'It should run straight out within seconds.' },
+      { t: 'Press the affected area firmly', hint: 'If it flexes or crunches, the metal behind is gone, not just the paint.' },
+      { t: 'Pull the trim card and check the vapour barrier', hint: 'BO front door section covers the sequence.' },
+      { t: 'Check the same spot on the other door', hint: 'Whatever caused it is probably symmetrical.' },
+      { t: 'Look at the sill under the side skirt', hint: 'Bonded skirts trap water against the sill — see the bodykit mod notes.' }
+    ],
+    fix: `
+<p>Scale of the repair depends entirely on the press test:</p>
+<ul>
+<li><b>Surface only, metal still solid.</b> Clear the drains, cut back to bright metal, treat,
+etch prime, colour, lacquer, then cavity-wax the inside of the door. This is a home job.</li>
+<li><b>Metal perforated.</b> It needs cutting out and letting in. Filler over a hole buys one
+winter and makes the eventual repair bigger.</li>
+</ul>
+<p><b>Clear the drains whatever you do.</b> Repairing the skin without fixing the drainage
+just resets the clock.</p>
+<div class="note amber">
+  <div class="hd">MOT note</div>
+  <p>A door skin is not a structural member, so surface corrosion here is not an automatic
+  failure. Corrosion within 30 cm of a structural mounting point is a different matter — which
+  is why the sill underneath the skirt is worth a look at the same time.</p>
+</div>`,
+    figs: [
+      { p: 1781, c: 'Front door — components and trim removal' },
+      { p: 1772, c: 'Clip types — which fasteners survive removal' },
+      { p: 1817, c: 'Side mud guard' }
+    ],
+    related: ['rust-tailgate']
+  },
+
+  /* ----------------------------------------------------- tailgate corrosion */
+  {
+    id: 'rust-tailgate',
+    title: 'Corrosion — tailgate at the wing mounts',
+    area: 'Body',
+    severity: 'attention',
+    status: 'open',
+    since: 'Since the wing went on',
+    blurb: 'Rust around where the GT wing bolts through the tailgate skin. This ' +
+           'one has an obvious cause and an obvious lesson.',
+    hot: { x: -28, y: 12, z: 0, label: 'Tailgate' },
+    symptom: `
+<p>Corrosion breaking out around the wing's mounting points on the tailgate.</p>`,
+    cause: `
+<p>Every hole drilled through a painted steel panel exposes bare edge metal. Unless that edge
+is sealed on <em>both</em> faces, water wicks in around the fastener, sits between the wing
+foot and the paint, and corrodes outward from the hole. A rubber gasket under the wing foot
+holds the water in rather than keeping it out.</p>
+<div class="note red">
+  <div class="hd">This was predictable, and it is on the mods page</div>
+  <p>The GT wing dossier already flags it: <em>"Every new hole through the tailgate skin is a
+  corrosion start point. Seal both faces and cavity-wax the inside."</em> That is what has
+  happened. The same warning applies to the tail bar project, which cuts a
+  <b>1.1 metre aperture</b> in the same panel — worth getting the method right on this repair
+  first.</p>
+</div>`,
+    check: [
+      { t: 'Remove the wing and look at the panel underneath', hint: 'The visible rust is the edge of it, not the whole of it.' },
+      { t: 'Check inside the tailgate around each hole', hint: 'Trim board off. Corrosion from a drilled hole works both ways.' },
+      { t: 'Check the tailgate drain paths are clear' },
+      { t: 'Look at the glass flange and the lower edge while it is apart' },
+      { t: 'Decide whether the wing goes back on the same holes', hint: 'Repairing around existing holes is harder than filling them and starting again.' }
+    ],
+    fix: `
+<ol>
+<li>Wing off, panel cleaned back to bright metal around every hole.</li>
+<li>Treat, etch prime, and — the step that gets skipped — <b>seal the bare edge inside each
+hole</b>, not just the visible face.</li>
+<li>Colour and lacquer, then cavity-wax the inside of the tailgate.</li>
+<li>Refit on new fasteners with a sealant bead under each foot, not a bare rubber pad.</li>
+</ol>
+<p>Added mass high on the tailgate also works the gas struts harder — worth checking they
+still hold the panel up while it is all apart.</p>`,
+    figs: [
+      { p: 1793, c: 'Back door — components' },
+      { p: 1798, c: 'Back door stay (gas strut)' },
+      { p: 1835, c: 'Back door glass' },
+      { p: 1772, c: 'Clip types' }
+    ],
+    related: ['rust-door']
+  },
+
+  /* ------------------------------------------------------------ heat shield */
+  {
+    id: 'heat-shield',
+    title: 'Missing exhaust heat shield',
+    area: 'Exhaust',
+    severity: 'attention',
+    status: 'open',
+    since: 'Months ago',
+    blurb: 'Came off and has not been replaced. Those shields are not decoration — ' +
+           'they keep exhaust heat off the floor pan and everything routed near it.',
+    hot: { x: -4, y: 1.6, z: 0, label: 'Heat shield' },
+    symptom: `
+<p>A shield departed some months ago. First job is working out <em>which</em> one, because the
+car has several and they matter to different degrees.</p>
+<div class="note cool">
+  <div class="hd">Two families of shield</div>
+  <ul style="margin-bottom:0">
+    <li><b>Exhaust manifold heat insulators</b> — upper and lower, bolted to the manifold in
+    the engine bay. These are the ones that crack around their bolt holes from heat cycling
+    and fall off. The 2ZZ-GE runs hot and this is common.</li>
+    <li><b>Underfloor heat insulators</b> — panels between the exhaust and the floor pan. The
+    manual's exhaust system page shows four of them.</li>
+  </ul>
+</div>`,
+    cause: `
+<p>Thin stainless, hundreds of heat cycles, and captive nuts that rust. The shield cracks
+around a fastener, starts to rattle, and eventually leaves.</p>
+<p>Consequences, in order of how much they should worry you: heat into the floor pan and
+whatever is routed along it; degraded underseal and sound deadening above the exhaust; a
+rattle that sounds much more expensive than it is; and — if it is a manifold shield on a
+lowered car with a bodykit — more under-bonnet heat than the engine bay was designed to
+shed.</p>`,
+    check: [
+      { t: 'Get the car up and identify which shield is missing', hint: 'Look for empty captive nuts or torn mounting tabs.' },
+      { t: 'Check the remaining shields for cracks around the fixings', hint: 'If one went, its neighbours are the same age.' },
+      { t: 'Look at the floor above where the shield should be', hint: 'Discoloured or blistered underseal means it has been getting hot.' },
+      { t: 'Check nothing else has been heat-damaged', hint: 'Brake lines, fuel lines and wiring routed along the tunnel.' },
+      { t: 'Check for a rattle at idle and on the overrun' }
+    ],
+    fix: `
+<p>Replace it. These are cheap parts and there is no good reason to run without one.</p>
+<p>If the mounting tabs have rotted away, a stainless repair strap and an exhaust clamp is an
+accepted fix — but it has to be metal. Cable ties near an exhaust are a fire, not a repair.</p>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Fastening</th><th>N·m</th><th>kgf·cm</th><th>ft·lbf</th></tr></thead>
+<tbody>
+<tr><td>Upper heat insulator × exhaust manifold — 2ZZ-GE</td><td class="n">20</td><td class="n">204</td><td class="n">15</td></tr>
+<tr><td>Lower heat insulator × exhaust manifold — 2ZZ-GE</td><td class="n">20</td><td class="n">204</td><td class="n">15</td></tr>
+<tr><td>Exhaust manifold × cylinder head — 2ZZ-GE</td><td class="n">50</td><td class="n">510</td><td class="n">37</td></tr>
+</tbody></table></div>
+<p class="faint" style="font-size:12px">Read off SS-14 (p.164) and the 2ZZ-GE manifold
+installation procedure (p.894). The 2ZZ lower insulator takes four bolts, the upper five.</p>`,
+    figs: [
+      { p: 940, c: 'Exhaust system — components, with all four heat insulators' },
+      { p: 894, c: '2ZZ-GE exhaust manifold and heat insulator installation' },
+      { p: 868, c: '2ZZ-GE manifold removal — the shields come off first' },
+      { p: 164, c: 'Engine mechanical torque specification' }
+    ],
+    related: []
+  },
+
+  /* -------------------------------------------------------------- oil change */
+  {
+    id: 'oil-change',
+    title: 'Engine oil and filter due',
+    area: 'Engine',
+    severity: 'attention',
+    status: 'open',
+    since: 'Due',
+    blurb: 'Overdue on a lift engine is not the same as overdue on an ordinary one — ' +
+           'the VVTL-i lifters are hydraulic, and oil is what operates them.',
+    hot: { x: 20, y: 3, z: 0, label: 'Oil' },
+    symptom: `
+<p>Nothing wrong yet. This one is on the list because of what the engine is.</p>
+<div class="note red">
+  <div class="hd">Why the 2ZZ-GE cares more than most</div>
+  <p>Lift is engaged by oil pressure pushing a locking pin through a slipper follower. Low,
+  thin or degraded oil means the pin does not lock reliably — and a lift mechanism that
+  half-engages at 6,200 rpm is how these engines destroy a lobe. The usual first symptom is
+  lift that comes in late, inconsistently, or not at all when hot.</p>
+</div>`,
+    cause: `
+<p>Ordinary service interval. Worth doing more often than the book implies on an engine that
+spends time near 8,000 rpm.</p>`,
+    check: [
+      { t: 'Check the level on a warm engine, parked level', hint: 'Do this far more often than you change it.' },
+      { t: 'Look at the colour and feel of the oil', hint: 'The manual says to replace it if the quality is visibly poor, regardless of mileage.' },
+      { t: 'Note the mileage and date before draining', hint: 'Log it in the garage page afterwards.' },
+      { t: 'Check whether this car has an oil cooler', hint: 'It changes the fill quantity — 4.4 L with, 4.2 L without.' },
+      { t: 'Have a new drain plug gasket ready', hint: 'The manual calls for a new one every time.' }
+    ],
+    fix: `
+<p>Straight out of the manual's own procedure:</p>
+<ol>
+<li>Remove the centre engine under cover.</li>
+<li>Remove the oil filler cap, then the drain plug, and drain into a container.</li>
+<li>Replace the oil filter. Toyota specify SST 09228-06501, and to tighten the new filter a
+further <b>3/4 turn</b> after the gasket contacts.</li>
+<li>Clean and install the drain plug <b>with a new gasket</b>.</li>
+<li>Refill, run, check for leaks, re-check the level.</li>
+</ol>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Item</th><th>Figure</th></tr></thead>
+<tbody>
+<tr><td>Drain plug torque</td><td class="n">37 N·m — 378 kgf·cm, 27 ft·lbf</td></tr>
+<tr><td>Capacity, with oil cooler</td><td class="n">4.4 L — 4.8 US qt, 4.0 Imp qt</td></tr>
+<tr><td>Capacity, without oil cooler</td><td class="n">4.2 L — 4.6 US qt, 3.8 Imp qt</td></tr>
+<tr><td>Dry fill</td><td class="n">4.8 L — 5.1 US qt, 4.2 Imp qt</td></tr>
+<tr><td>Grade</td><td class="n">API SJ / ILSAC, SAE 5W-30 named first choice</td></tr>
+</tbody></table></div>
+<p class="faint" style="font-size:12px">Torque and procedure read off LU-3 (p.1070);
+capacities off PP-17 (p.75). The 5W-30 recommendation is the manual's, written in 1999 —
+plenty of 2ZZ owners run a heavier grade in summer, which is a judgement call, not a
+specification.</p>`,
+    figs: [
+      { p: 1070, c: 'Oil and filter replacement — procedure and drain plug torque' },
+      { p: 1068, c: 'Oil level and quality inspection' },
+      { p: 75, c: 'Lubricant capacities and grade' },
+      { p: 53, c: 'Engine maintenance items' }
+    ],
+    related: []
+  }
+];

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Open faults and outstanding jobs on a 2003 Celica T-Sport, mapped on the car.">
+<title>Issues — Celica T-Sport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="index.html"><i class="mk"></i><b>CELICA</b><span>ZZT231</span></a>
+    <button class="burger" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav class="main">
+      <a href="index.html">Car</a>
+      <a href="issues.html">Issues</a>
+      <a href="mods.html">Mods</a>
+      <a href="electrical.html">Electrical</a>
+      <a href="manual.html">Manual</a>
+      <a href="specs.html">Specs</a>
+      <a href="garage.html">Garage</a>
+      <a href="projects.html">Projects</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="page-in">
+
+  <!-- dashboard -------------------------------------------------------- -->
+  <div id="issIndex">
+    <section class="sec tight">
+      <div class="wrap">
+        <p class="eyebrow">07 — Issues</p>
+        <h1 style="font-size:clamp(24px,3.6vw,34px);margin-bottom:12px">What is wrong with it</h1>
+        <p class="lede">
+          Everything currently outstanding, marked on the car. Each one carries what it
+          looks like, what usually causes it, what to check in what order, and the manual
+          pages for the job.
+        </p>
+
+        <div class="stats" id="issStats" style="margin-top:28px"></div>
+
+        <div class="dash" style="margin-top:14px">
+          <div class="model-wrap card">
+            <div id="issModel" class="model-3d"></div>
+            <div class="model-fb">
+              <p class="empty">The map needs WebGL, which this browser has not given the
+              page. Every issue is still listed below.</p>
+            </div>
+            <div class="model-ui">
+              <span class="chip mono">Tap a marker</span>
+              <div class="row" style="gap:6px">
+                <button class="btn ghost sm" id="issHidden" aria-pressed="true">Hidden lines</button>
+                <button class="btn ghost sm" id="issSpin" aria-pressed="true">Auto-turn</button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="card dash-side" id="dashSide"></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec tight" style="padding-top:6px">
+      <div class="wrap">
+        <div class="spread" style="margin-bottom:16px">
+          <h2 style="font-size:21px">All issues</h2>
+          <div class="row" id="issFilters"></div>
+        </div>
+        <div class="grid g2" id="issCards"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- detail ----------------------------------------------------------- -->
+  <div id="issDetail" hidden>
+    <section class="sec tight" style="padding-bottom:16px">
+      <div class="wrap">
+        <a class="btn ghost sm" href="#" id="issBack" style="margin-bottom:20px">← All issues</a>
+        <div id="issHead"></div>
+      </div>
+    </section>
+
+    <section class="sec tight" style="padding-top:0">
+      <div class="wrap">
+        <div class="doc-layout">
+          <nav class="toc" id="issToc" aria-label="Contents"></nav>
+          <article class="doc" id="issBody"></article>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div>
+      <p><b style="color:var(--tx)">Issues</b></p>
+      <p>Diagnosis notes follow the manual where it has something to say, and say so where they do not.</p>
+    </div>
+    <div><p><a href="index.html">Home</a> · <a href="garage.html">Garage</a> · <a href="manual.html">Manual</a></p></div>
+  </div>
+</footer>
+
+<script src="data/manual.js"></script>
+<script src="data/issues.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/issues.js"></script>
+<script src="assets/js/vendor/three.min.js" defer></script>
+<script src="data/model.js" defer></script>
+<script src="assets/js/model3d.js" defer></script>
+</body>
+</html>

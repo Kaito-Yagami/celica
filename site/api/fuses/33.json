@@ -1,0 +1,1 @@
+{"n":33,"amp":25,"name":"AM1","cls":"bat","conf":"hi","load":[8,18],"what":"Main battery feed into the ignition switch. Everything IG and ACC downstream is fed through here.","note":"Never tap. This is a trunk circuit, not a branch — its 25 A is already spoken for by everything else that switches with the key.","tapped":false}

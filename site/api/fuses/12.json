@@ -1,0 +1,1 @@
+{"n":12,"amp":7.5,"name":"ECU-B","cls":"bat","conf":"hi","load":[0.05,0.3],"what":"ECU keep-alive memory. Constant.","note":"Never tap. Pulling this loses ECU adaptations.","tapped":false}

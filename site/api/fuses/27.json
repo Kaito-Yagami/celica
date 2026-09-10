@@ -1,0 +1,1 @@
+{"n":27,"amp":7.5,"name":"OBD","cls":"bat","conf":"lo","load":[0.05,0.3],"what":"DLC3 diagnostic connector supply.","note":"Pin 16 of the OBD port is normally permanently live. Worth confirming before assuming either way — this is the one on the board most likely to surprise you.","tapped":false}

@@ -1,0 +1,1 @@
+{"n":22,"amp":7.5,"name":"TURN","cls":"ig","conf":"hi","load":[2.6,3.6],"what":"Indicators via the flasher. Hazards are fed separately so they work with the key out.","note":"The signal to tap if you want an indicator trigger — but read it through an optocoupler, never load it. Extra current here changes the flash rate on a car with bulbs.","tapped":false}
