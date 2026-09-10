@@ -4,7 +4,9 @@ A local, offline site for a 2003 Toyota Celica T-Sport (ZZT231, 2ZZ-GE, C60, RHD
 factory manual made searchable, the fusebox as it actually is on this car, the ten
 modifications with the manual pages for each job, and an electrical load planner.
 
-**Open `docs/index.html` by double-clicking it.** No server, no build step, no network.
+**Live at https://kaito-yagami.github.io/celica/**
+
+Also runs entirely offline — **open `docs/index.html` by double-clicking it.** No server, no build step, no network.
 
 ---
 
