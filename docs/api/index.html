@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>API — Celica T-Sport</title>
+<link rel="stylesheet" href="../assets/css/app.css">
+<style>
+body{padding:0 0 60px}
+main{max-width:900px;margin:0 auto;padding:40px 20px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+td{padding:9px 12px;border-bottom:1px solid var(--ink-3);vertical-align:top}
+td.d{color:var(--tx-dim)}
+code{font-family:var(--mono);font-size:12.5px;color:var(--ember)}
+code.dim{color:var(--tx-faint)}
+a code{color:var(--ember)}
+</style></head><body><main>
+<p class="eyebrow">Read-only JSON API</p>
+<h1 style="font-size:30px;margin-bottom:14px">Celica T-Sport ZZT231</h1>
+<p class="lede">Read-only API over a 2003 Toyota Celica T-Sport: its faults, modifications, planned work, fusebox, specifications, and the full 1,972-page factory service manual.</p>
+
+<div class="note red">
+<div class="hd">Every endpoint is a .json file</div>
+<p>This is static hosting, so there are no dynamic routes. <code>/api</code> on its own is
+this page; the machine-readable index is
+<a href="index.json"><code>index.json</code></a>. Append <code>.json</code> to everything
+below.</p>
+</div>
+
+<p class="muted" style="font-size:13.5px">Base: <code>https://kaito-yagami.github.io/celica/api/</code></p>
+
+<table><tbody>
+<tr><td><a href="index.json"><code>index.json</code></a></td><td class="d">This index.</td></tr>
+<tr><td><a href="openapi.json"><code>openapi.json</code></a></td><td class="d">OpenAPI 3.1 description of everything below.</td></tr>
+<tr><td><a href="car.json"><code>car.json</code></a></td><td class="d">Identity and factory specification.</td></tr>
+<tr><td><a href="issues.json"><code>issues.json</code></a></td><td class="d">Open faults. Filters: status, area, severity.</td></tr>
+<tr><td><code class="dim">/api/issues/{id}</code></td><td class="d">One fault in full, with diagnosis steps.</td></tr>
+<tr><td><a href="projects.json"><code>projects.json</code></a></td><td class="d">Planned work. Filters: status, cat.</td></tr>
+<tr><td><code class="dim">/api/projects/{id}</code></td><td class="d">One project in full.</td></tr>
+<tr><td><a href="mods.json"><code>mods.json</code></a></td><td class="d">Modifications already done.</td></tr>
+<tr><td><code class="dim">/api/mods/{id}</code></td><td class="d">One modification.</td></tr>
+<tr><td><a href="fuses.json"><code>fuses.json</code></a></td><td class="d">Instrument panel J/B. Filters: cls, tapped.</td></tr>
+<tr><td><code class="dim">/api/fuses/{n}</code></td><td class="d">One fuse position, 1-35.</td></tr>
+<tr><td><a href="specs.json"><code>specs.json</code></a></td><td class="d">Service data groups and fluid capacities.</td></tr>
+<tr><td><a href="specs/torque.json"><code>specs/torque.json</code></a></td><td class="d">Tightening torques. Filter: q.</td></tr>
+<tr><td><a href="maintenance.json"><code>maintenance.json</code></a></td><td class="d">Inspection checklist and pre-MOT list.</td></tr>
+<tr><td><a href="manual/sections.json"><code>manual/sections.json</code></a></td><td class="d">Section tree of the service manual.</td></tr>
+<tr><td><code class="dim">/api/manual/search</code></td><td class="d">Full-text search. Params: q, limit, figures. &mdash; <b>live server only</b></td></tr>
+<tr><td><code class="dim">/api/manual/pages/{n}</code></td><td class="d">One page: code, heading, text, figure link.</td></tr>
+<tr><td><code class="dim">assets/fig/pNNNN.png</code></td><td class="d">The rendered page image, four-digit zero-padded.</td></tr>
+<tr><td><code class="dim">/api/wheel</code></td><td class="d">Rolling radius and speedo error. Params: width, profile, rim. &mdash; <b>live server only</b></td></tr>
+</tbody></table>
+
+<div class="note amber" style="margin-top:24px">
+<div class="hd">Two endpoints are not here</div>
+<p><code>/api/manual/search</code> and <code>/api/wheel</code> compute per request, so they
+cannot be static. Use <a href="manual/pages.json"><code>manual/pages.json</code></a> to
+locate a page by heading or code, or run <code>python tools/serve.py</code> locally to get
+both back.</p>
+</div>
+
+<div class="note cool">
+<div class="hd">What this is a reference to</div>
+<p>Toyota RM744U1/U2 - 2000 Celica (ZZT230/231) repair manual, vols 1 and 2</p>
+<p>US-market 2000 manual. Mechanicals carry over to a 2003 UK facelift T-Sport; body electrical, combination meter and some trim do not.</p>
+<p>Page text comes from the PDF's own text layer, whose character map is damaged. Words are often mangled. Use it to find a page, then read the figure.</p>
+</div>
+
+<p style="margin-top:26px"><a href="../">← the site itself</a> ·
+<a href="openapi.json">OpenAPI 3.1 description</a></p>
+</main></body></html>

@@ -49,6 +49,109 @@ def payload(route_path, qs=None):
     return body
 
 
+
+def write_landing(idx, base):
+    """
+    An index.html for /api/.
+
+    A static host has no route for a bare `/api` - it looks for `/api/index.html`
+    and 404s otherwise. Anything fetching the obvious URL therefore concludes
+    there is no API here at all, which is exactly the wrong lesson: the API is
+    two thousand JSON files sitting right next to this page. So `/api/` answers
+    with a page that says so and lists them.
+    """
+    base = base.rstrip("/")
+    rows = []
+    for ep in idx["endpoints"]:
+        route, does = ep["route"], ep["does"]
+        path = route.split(" ", 1)[1] if " " in route else route
+        if "{" in path or "?" in path or path.startswith("assets"):
+            rows.append((path, does, None))
+            continue
+        href = (path[4:] or "/index").lstrip("/") or "index"
+        if not href.endswith(".json"):
+            href += ".json"
+        # only link it if the export actually produced that file - search and
+        # the wheel calculator compute per request and have no static form
+        if not os.path.exists(os.path.join(OUT, *href.split("/"))):
+            rows.append((path, does + " &mdash; <b>live server only</b>", None))
+            continue
+        rows.append((path, does, href))
+
+    items = "\n".join(
+        '<tr><td>%s</td><td class="d">%s</td></tr>' % (
+            ('<a href="%s"><code>%s</code></a>' % (href, href)) if href
+            else '<code class="dim">%s</code>' % path.replace("<", "&lt;"),
+            does)
+        for path, does, href in rows)
+
+    html = """<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>API — Celica T-Sport</title>
+<link rel="stylesheet" href="../assets/css/app.css">
+<style>
+body{padding:0 0 60px}
+main{max-width:900px;margin:0 auto;padding:40px 20px}
+table{width:100%%;border-collapse:collapse;font-size:13.5px}
+td{padding:9px 12px;border-bottom:1px solid var(--ink-3);vertical-align:top}
+td.d{color:var(--tx-dim)}
+code{font-family:var(--mono);font-size:12.5px;color:var(--ember)}
+code.dim{color:var(--tx-faint)}
+a code{color:var(--ember)}
+</style></head><body><main>
+<p class="eyebrow">Read-only JSON API</p>
+<h1 style="font-size:30px;margin-bottom:14px">%(name)s</h1>
+<p class="lede">%(desc)s</p>
+
+<div class="note red">
+<div class="hd">Every endpoint is a .json file</div>
+<p>This is static hosting, so there are no dynamic routes. <code>/api</code> on its own is
+this page; the machine-readable index is
+<a href="index.json"><code>index.json</code></a>. Append <code>.json</code> to everything
+below.</p>
+</div>
+
+<p class="muted" style="font-size:13.5px">Base: <code>%(base)s/api/</code></p>
+
+<table><tbody>
+%(rows)s
+</tbody></table>
+
+<div class="note amber" style="margin-top:24px">
+<div class="hd">Two endpoints are not here</div>
+<p><code>/api/manual/search</code> and <code>/api/wheel</code> compute per request, so they
+cannot be static. Use <a href="manual/pages.json"><code>manual/pages.json</code></a> to
+locate a page by heading or code, or run <code>python tools/serve.py</code> locally to get
+both back.</p>
+</div>
+
+<div class="note cool">
+<div class="hd">What this is a reference to</div>
+<p>%(src)s</p>
+<p>%(caveat)s</p>
+<p>%(text)s</p>
+</div>
+
+<p style="margin-top:26px"><a href="../">← the site itself</a> ·
+<a href="openapi.json">OpenAPI 3.1 description</a></p>
+</main></body></html>
+""" % {
+        "name": idx["name"],
+        "desc": idx["description"],
+        "base": base or "",
+        "rows": items,
+        "src": idx["provenance"]["manual"],
+        "caveat": idx["provenance"]["caveat"],
+        "text": idx["provenance"]["textLayer"],
+    }
+
+    path = os.path.join(OUT, "index.html")
+    with io.open(path, "w", encoding="utf-8") as fh:
+        fh.write(html)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--base", default="/",
@@ -131,6 +234,10 @@ def main():
     print("writing %d manual pages ..." % len(pages))
     for i in range(len(pages)):
         emit("manual/pages/%d.json" % i, "/api/manual/pages/%d" % i)
+
+    # last, so it can link only the endpoints that actually got written
+    write_landing(idx, args.base)
+    files += 1
 
     print("\n%d files, %.1f MB in docs/api/" % (files, total / 1048576.0))
     print("figures stay where they are: docs/assets/fig/pNNNN.png")

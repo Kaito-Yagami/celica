@@ -43,7 +43,7 @@ Two endpoints cannot survive going static, because they compute per request:
 
 ## Pointing Gemini at it
 
-> This is a read-only API about my car: https://kaito-yagami.github.io/celica/api/index.json
+> This is a read-only API about my car: https://kaito-yagami.github.io/celica/api/
 > Fetch that first — it lists every endpoint. Then tell me what is wrong with the car and what
 > the manual says about fixing the air conditioning.
 
