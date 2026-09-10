@@ -17,11 +17,20 @@ which needs a token with `workflow` scope that this one does not have. So `site/
 ```bash
 python tools/build.py                                              # only if the manual changed
 python tools/export_api.py --base https://kaito-yagami.github.io/celica
+python tools/stamp.py                                              # after ANY css/js change
 git add -A && git commit -m "update" && git push
 ```
 
 Pages rebuilds on push, live in about thirty seconds. The `--base` flag matters: the OpenAPI
 `servers` entry is the only value in the whole site that cannot be a relative path.
+
+`stamp.py` is not optional. Pages sends a ten minute `max-age` on assets, but Safari's memory
+and back/forward caches hold a stylesheet or a script far longer than that — long enough that a
+fix can be live on the server and still invisible on the one phone you are trying to fix, with
+no way to tell the two apart from the outside. Stamping every reference with a hash of the file
+means the URL changes whenever the file does, so a stale copy can never be reused. It is
+idempotent, and it only restamps what actually changed, which matters when `data/manual.js`
+alone is 1.8 MB.
 
 ## What is live, and what is not
 

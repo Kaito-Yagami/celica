@@ -568,6 +568,9 @@ mark{background:rgba(192,80,74,.28);color:#fff;border-radius:2px;padding:0 2px}
 .fb-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid var(--ink-3)}
 
 .fbsvg{width:100%;height:auto;display:block;overflow:visible}
+/* backstop for the same problem: if height:auto resolves to nothing, the
+   ratio still gives the box a height. JS pins it in px regardless. */
+@supports (aspect-ratio:1){ .fbsvg{aspect-ratio:var(--fb-ratio,632/355)} }
 
 .fslot{cursor:pointer;transition:opacity .2s var(--ease)}
 .fslot .fbody{
@@ -817,26 +820,43 @@ ul.watch li::before{
 /* ==========================================================================
    fusebox on a phone
    --------------------------------------------------------------------------
-   Scaling 35 slots into 375 px gives 17 px targets you cannot hit with a
-   finger and cannot read. The spatial layout is the whole point of this map —
-   it has to match the real lid — so keep it at a usable size and scroll it
-   sideways instead of shrinking it.
+   This used to hold the map at full size inside a sideways scroller, on the
+   argument that shrinking 35 slots into 375 px gives targets too small to hit.
+   That argument was about the *wide* layout; the narrow one is 504 units, not
+   632, and fits a phone at roughly two thirds scale - a 33 px slot, which is
+   fine for a grid of numbered cells you tap to open a panel.
+
+   What it cost was three separate ways to end up with no map at all: a
+   min-width inside a scroll container, -webkit-overflow-scrolling:touch (long
+   deprecated, and known to leave composited content blank on iOS), and a
+   height the browser had to infer. Any one of those failing hides everything.
+
+   So the map now just fits the width it is given. That is what a viewBox is
+   for, and there is nothing left to fail. Only the type needs help: it is
+   scaled back up in user units so it lands at its intended pixel size no
+   matter how far the map itself has been scaled down.
    ========================================================================== */
 
-#fbSvg{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;position:relative}
-#fbSvg .fbsvg{min-width:486px}   /* the narrow layout's own width */
+#fbSvg{position:relative}
 
-@media (max-width:700px){
-  .fb-box{padding:14px 0 14px 14px}
-  .fb-box .fb-hint,.fb-box .fb-legend{padding-right:14px}
+/* --fbz is set by electrical.js: viewBox units per rendered pixel, so
+   14px * --fbz in user space renders as 14 real px at any scale. */
+.fbsvg .fnum{font-size:calc(14px * var(--fbz,1))}
+.fbsvg .famp{font-size:calc(9px * var(--fbz,1))}
+
+@media (max-width:760px){
   .fb-box .fb-hint::after{
-    content:" · 1-16 moved below to fit · swipe if it overflows";color:var(--red);
+    content:" · 1-16 moved below to fit";color:var(--red);
   }
-  /* fade the right edge so it reads as scrollable */
-  #fbSvg::after{
-    content:"";position:sticky;right:0;top:0;float:right;
-    width:34px;height:100%;margin-left:-34px;pointer-events:none;
-    background:linear-gradient(90deg,transparent,var(--ink-1));
+  /* The page wrap and the card together take 72 px out of a 375 px screen,
+     which is a fifth of the map. Break the map out to (nearly) the full
+     width - it is the one thing on the page worth the whole screen. The
+     6 px keeps the housing outline off the very edge. */
+  #fbSvg{
+    width:100vw;
+    margin-left:calc(50% - 50vw + 6px);
+    margin-right:calc(50% - 50vw + 6px);
+    width:calc(100vw - 12px);
   }
 }
 

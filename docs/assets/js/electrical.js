@@ -125,6 +125,8 @@
       preserveAspectRatio: 'xMidYMid meet',
       class: 'fbsvg', role: 'group', 'aria-label': 'Fuse box map'
     });
+    // the CSS backstop reads this, so it has to follow the live layout
+    svg.style.setProperty('--fb-ratio', VBW + '/' + VBH);
 
     /* housing outline */
     svg.appendChild(svgEl('rect', {
@@ -188,6 +190,32 @@
     });
 
     host.appendChild(svg);
+    fitSvgHeight(svg);
+  }
+
+  /*
+   * Pin the SVG's height in pixels rather than letting the browser work it out.
+   *
+   * Safari resolves width:100% on an SVG fine but will not always derive the
+   * height from the viewBox, leaving it zero. The scroll container clips
+   * overflow-y, so a zero-height SVG means the entire map vanishes while the
+   * card, the hint and the legend all still render - which looks like the map
+   * was never drawn. Computing it from the measured width removes the guess.
+   */
+  function fitSvgHeight(svg) {
+    if (!svg) return;
+    var w = svg.getBoundingClientRect().width;
+    if (!w) {
+      var host = $('#fbSvg');
+      w = host ? host.clientWidth : 0;
+    }
+    if (!w) w = L.vbw;                          // nothing measurable yet
+    svg.style.height = (w * L.vbh / L.vbw).toFixed(1) + 'px';
+
+    /* viewBox units per rendered pixel. Type multiplies by this so it comes
+       out the size it was designed at however far the map has been scaled. */
+    var z = L.vbw / w;
+    svg.style.setProperty('--fbz', Math.max(1, Math.min(1.7, z)).toFixed(3));
   }
 
   /* ------------------------------------------------------------- detail */
@@ -515,6 +543,16 @@
   } else if (narrowQ.addListener) {
     narrowQ.addListener(function () { drawBox(); });
   }
+
+  /* Crossing the breakpoint is already handled above by redrawing. This is
+     for every other width change - address bar collapsing, rotating inside
+     the same breakpoint - where the layout stands but the scale moves. */
+  window.addEventListener('resize', function () {
+    fitSvgHeight(document.querySelector('.fbsvg'));
+  });
+  window.addEventListener('orientationchange', function () {
+    setTimeout(function () { fitSvgHeight(document.querySelector('.fbsvg')); }, 150);
+  });
 
   renderFilters();
   drawBox();
