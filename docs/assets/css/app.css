@@ -848,16 +848,17 @@ ul.watch li::before{
   .fb-box .fb-hint::after{
     content:" · 1-16 moved below to fit";color:var(--red);
   }
-  /* The page wrap and the card together take 72 px out of a 375 px screen,
-     which is a fifth of the map. Break the map out to (nearly) the full
-     width - it is the one thing on the page worth the whole screen. The
-     6 px keeps the housing outline off the very edge. */
-  #fbSvg{
-    width:100vw;
-    margin-left:calc(50% - 50vw + 6px);
-    margin-right:calc(50% - 50vw + 6px);
-    width:calc(100vw - 12px);
+  /* The card comes in to the screen edge so the map gets the width, but it
+     keeps real padding inside so the map is not jammed against the border.
+     Bleeding the map itself to the edge bought about 30 px of slot and cost
+     the page its margins - not a good trade on a phone. */
+  .fb-box{
+    padding:16px 14px;
+    margin-left:calc(50% - 50vw + 10px);
+    margin-right:calc(50% - 50vw + 10px);
   }
+  .fb-hint{margin-bottom:16px}
+  #fbSvg{margin:2px 0 4px}
 }
 
 /* --------------------------------------------------------------------------

@@ -61,12 +61,20 @@
     var bh = H * 0.78;
 
     if (narrow) {
-      var gridY = H + 22;
+      /* 1-16 is squashed to 0.78 in the wide layout because eight of them have
+         to stack beside a map that is only so tall. As two rows of eight there
+         is no such constraint, so give them the same height as every other
+         slot - on a phone they were the tightest thing on the page. */
+      var nbh = H;
+      /* 17 sits above the main rows. At H + 22 its top landed at y=2, which is
+         above the housing outline at y=6, so it sat on the border rather than
+         inside the box. */
+      var gridY = H + 38;
       var blockY = gridY + 2 * H + GY + 26;
       L = {
-        narrow: true, gridX: gridX, gridY: gridY, blockY: blockY, bh: bh,
+        narrow: true, gridX: gridX, gridY: gridY, blockY: blockY, bh: nbh,
         vbw: gridX * 2 + rowsW,
-        vbh: blockY + 2 * (bh + GY) + 18,
+        vbh: blockY + 2 * (nbh + GY) + 18,
         dividerY: blockY - 14
       };
     } else {
