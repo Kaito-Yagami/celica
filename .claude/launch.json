@@ -4,7 +4,7 @@
     {
       "name": "celica-site",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8777", "--directory", "site"],
+      "runtimeArgs": ["-m", "http.server", "8777", "--directory", "docs"],
       "port": 8777
     }
   ]

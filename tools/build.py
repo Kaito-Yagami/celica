@@ -4,8 +4,8 @@ Celica T230 site - one-shot asset builder.
 
 Reads the scanned Toyota service manual PDF (RM744U1/U2) and emits:
 
-    site/assets/fig/p####.png   1-bit line-art figures for curated pages
-    site/data/manual.js         section tree + per-page metadata + page text
+    docs/assets/fig/p####.png   1-bit line-art figures for curated pages
+    docs/data/manual.js         section tree + per-page metadata + page text
 
 Run:  python tools/build.py            every page, ~5 min
       python tools/build.py --curated  only the shortlist in CURATED
@@ -39,7 +39,7 @@ from PIL import Image, ImageOps
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-SITE = os.path.join(ROOT, "site")
+SITE = os.path.join(ROOT, "docs")
 FIGDIR = os.path.join(SITE, "assets", "fig")
 DATADIR = os.path.join(SITE, "data")
 

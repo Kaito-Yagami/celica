@@ -24,7 +24,7 @@ Reaching this from a cloud service:
                     https:// address that forwards here. Needs cloudflared
                     installed, and your machine has to stay on.
 
-    export_api.py   writes every endpoint out as static JSON under site/api/,
+    export_api.py   writes every endpoint out as static JSON under docs/api/,
                     which can go on any static host and be fetched from
                     anywhere. Everything works except search and the wheel
                     calculator, which have to compute per request.
@@ -48,7 +48,7 @@ from urllib.parse import urlparse, parse_qs, unquote
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-SITE = os.path.join(ROOT, "site")
+SITE = os.path.join(ROOT, "docs")
 DATA = os.path.join(SITE, "data")
 
 # manual.js is 1.8 MB of page text and is already pure JSON after the marker,
@@ -82,7 +82,7 @@ def load_via_node():
         sys.exit("node is not on PATH.\n"
                  "The data files are JavaScript, not JSON, so a real engine has to\n"
                  "evaluate them. Install Node, or run the site without the API —\n"
-                 "site/index.html works on its own.")
+                 "docs/index.html works on its own.")
     except subprocess.CalledProcessError as exc:
         sys.exit("node failed reading the data files:\n" +
                  exc.stderr.decode("utf-8", "replace"))
@@ -670,7 +670,7 @@ def main():
 
     static = os.path.join(SITE, "api", "index.json")
     if os.path.exists(static):
-        sys.stderr.write("       (a static export also exists in site/api/)\n")
+        sys.stderr.write("       (a static export also exists in docs/api/)\n")
     sys.stderr.write("\n")
 
     if args.tunnel:

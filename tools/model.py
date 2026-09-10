@@ -5,7 +5,7 @@ Turn the printable Celica STL into something the home page can load.
 The site runs from file://, where fetch() and XHR are blocked for local files,
 so the mesh cannot be a .stl or .bin sitting next to the page - it has to
 arrive as a plain <script>. This packs it down and base64s it into
-site/data/model.js.
+docs/data/model.js.
 
 Packing: weld duplicate vertices (a printable STL repeats every one three
 times), quantise positions to a uint16 grid across the bounding box, and index
@@ -27,7 +27,7 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-DATADIR = os.path.join(ROOT, "site", "data")
+DATADIR = os.path.join(ROOT, "docs", "data")
 
 ZIP = r"C:\Users\kadeb\Downloads\toyota-celica-gen7-scale1-70-for-3d-printing (1).zip"
 INNER = "source/toyota celica serie 2000 ca1zu70.zip"

@@ -5,7 +5,7 @@ Write the API out as static JSON files.
 serve.py only listens on your own machine. A cloud service — Gemini, or
 anything else that is not running locally — cannot reach 127.0.0.1, and
 --host 0.0.0.0 only gets you as far as your own LAN. So this mirrors every
-read-only endpoint to a file under site/api/, which means the whole thing can
+read-only endpoint to a file under docs/api/, which means the whole thing can
 be dropped on any static host and fetched over HTTPS from anywhere.
 
 The payloads come from serve.py's own route() function, so there is exactly
@@ -132,8 +132,8 @@ def main():
     for i in range(len(pages)):
         emit("manual/pages/%d.json" % i, "/api/manual/pages/%d" % i)
 
-    print("\n%d files, %.1f MB in site/api/" % (files, total / 1048576.0))
-    print("figures stay where they are: site/assets/fig/pNNNN.png")
+    print("\n%d files, %.1f MB in docs/api/" % (files, total / 1048576.0))
+    print("figures stay where they are: docs/assets/fig/pNNNN.png")
 
 
 if __name__ == "__main__":

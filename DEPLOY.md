@@ -102,6 +102,6 @@ decision is not buried.
 
 If you want it reversed later, the least disruptive route is `gh repo edit --visibility
 private` — which also turns Pages off, since private Pages needs a paid plan. Deleting just
-`site/assets/fig/` and re-pushing keeps the site up and takes the manual images down.
+`docs/assets/fig/` and re-pushing keeps the site up and takes the manual images down.
 
 Your number plate is on the home page too, if that matters to you.
